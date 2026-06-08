@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>完整报告 · 生命数字</title>
+<meta name="description" content="孩子的完整生命数字天赋报告">
+<link rel="stylesheet" href="src/css/common.css">
+<style>
+  .report-header {
+    text-align: center; padding: 36px 20px 4px;
+    position: relative; z-index: var(--z-content);
+  }
+  .report-header .child-name { font-family: var(--font-display); font-size: 28px; color: var(--text-primary); }
+  .report-header .birth-info { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+  .quarterly-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .quarter-item { background: var(--bg-warm); border-radius: var(--radius-tag); padding: 12px; font-size: 13px; line-height: 1.65; }
+  .quarter-item .q-label { font-weight: 600; color: var(--text-primary); font-size: 12px; display: block; margin-bottom: 4px; }
+  .quarter-item .q-text { color: var(--text-secondary); }
+  .decor-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: var(--z-decor); }
+  .interest-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+  .interest-tag { background: var(--bg-warm); color: var(--text-primary); padding: 8px 16px; border-radius: var(--radius-btn); font-size: 14px; font-weight: 500; }
+  .share-section { text-align: center; padding: 8px 16px 40px; }
+
+  /* ═══ Dual-circle SVG ═══ */
+  .compat-dual { display: flex; justify-content: center; padding: 8px 0 0; }
+  .compat-dual svg { width: 300px; height: 220px; }
+  .compat-dual-labels { display: flex; justify-content: space-around; max-width: 300px; margin: -12px auto 0; padding: 0 8px; }
+  .compat-dual-label { text-align: center; font-size: 12px; }
+  .compat-dual-label .dual-label-color { font-weight: 500; }
+  .compat-dual-label .dual-label-name { color: var(--text-muted); font-size: 11px; }
+
+  /* ═══ Synergy score card ═══ */
+  .synergy-card { background: var(--bg-card); border-radius: var(--radius-card); padding: 18px 20px; margin: 0 16px 12px; position: relative; z-index: var(--z-content); box-shadow: 0 2px 12px rgba(58,46,46,0.05); }
+  .synergy-score-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .synergy-label { font-size: 14px; color: var(--text-secondary); }
+  .synergy-score-num { font-family: var(--font-display); font-size: 36px; color: var(--text-primary); line-height: 1; }
+  .synergy-bar-track { width: 100%; height: 8px; background: #EDE0D5; border-radius: 4px; overflow: hidden; margin-bottom: 12px; }
+  .synergy-bar-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, #FF6B6B, #FF9F43, #FFB830); transition: width 0.8s var(--ease-out); }
+  .synergy-type-tag { display: inline-block; font-family: var(--font-display); font-size: 15px; color: #B8780A; background: linear-gradient(135deg, #FFF5E0, #FFE8B0); padding: 4px 14px; border-radius: var(--radius-btn); margin-bottom: 8px; }
+  .synergy-summary { font-size: 14px; color: var(--text-secondary); line-height: 1.65; }
+
+  /* ═══ Relation tags ═══ */
+  .relation-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+  .relation-tag-capsule { font-size: 12px; font-weight: 500; padding: 5px 14px; border-radius: var(--radius-btn); color: #fff; }
+
+  /* ═══ Interpretation ═══ */
+  .relation-interp { font-size: 14px; color: var(--text-secondary); line-height: 1.8; }
+  .relation-interp p { margin-bottom: 8px; }
+  .relation-lesson { font-size: 15px; font-weight: 600; line-height: 1.7; display: block; margin-top: 6px; }
+
+  /* ═══ Golden quote ═══ */
+  .golden-quote-card { border-radius: var(--radius-card); padding: 20px; margin: 0 16px 12px; text-align: center; position: relative; z-index: var(--z-content); }
+  .golden-quote-text { font-family: var(--font-display); font-size: 16px; line-height: 1.6; }
+
+  /* ═══ Conflict card ═══ */
+  .conflict-card { background: var(--bg-card); border-radius: var(--radius-card); padding: 14px 16px; margin-bottom: 8px; position: relative; box-shadow: 0 1px 8px rgba(58,46,46,0.04); }
+  .conflict-card .conflict-scene { font-size: 12px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+  .conflict-card .conflict-reason { font-size: 11px; color: #A8917A; line-height: 1.55; margin-bottom: 8px; }
+  .conflict-keyword { display: inline-block; font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: var(--radius-btn); color: #fff; }
+
+  /* ═══ Solution item ═══ */
+  .solution-item { padding: 12px 0; }
+  .solution-item + .solution-item { border-top: 1px solid var(--border); }
+  .solution-num { display: inline-flex; width: 24px; height: 24px; border-radius: 50%; background: var(--c4); color: #fff; font-size: 13px; font-weight: 600; align-items: center; justify-content: center; margin-right: 8px; flex-shrink: 0; }
+  .solution-title { font-size: 12px; font-weight: 600; color: var(--text-primary); }
+  .solution-action { font-size: 11px; color: var(--text-secondary); line-height: 1.55; margin-top: 4px; padding-left: 32px; }
+  .solution-example { font-size: 11px; color: var(--text-muted); font-style: italic; margin-top: 4px; padding-left: 32px; }
+
+  /* ═══ Blindspot v2 ═══ */
+  .blindspot-card-v2 { border-radius: var(--radius-card); padding: 18px; margin: 0 16px 12px; position: relative; z-index: var(--z-content); }
+  .blindspot-card-v2 .blindspot-label { font-size: 12px; color: var(--text-muted); font-weight: 500; margin-bottom: 8px; }
+  .blindspot-card-v2 .blindspot-pattern { font-size: 13px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 12px; }
+  .blindspot-card-v2 .blindspot-warning { font-size: 14px; font-weight: 600; line-height: 1.75; }
+
+  /* ═══ Dad card ═══ */
+  .dad-card { margin: 0 16px 12px; padding: 18px; border: 2px dashed var(--border-strong); border-radius: var(--radius-card); text-align: center; position: relative; z-index: var(--z-content); background: var(--bg-card); }
+  .dad-card .dad-title { font-size: 16px; font-weight: 500; color: var(--text-primary); }
+  .dad-card .dad-subtitle { font-size: 12px; color: var(--text-muted); margin: 4px 0 12px; }
+  .dad-form-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+  .dad-form-row select { padding: 10px 6px; border: 1.5px solid var(--border); border-radius: var(--radius-input); font-size: 14px; font-family: var(--font-body); color: var(--text-primary); background: var(--bg-card); -webkit-appearance: none; appearance: none; }
+
+  /* ═══ Loading overlay ═══ */
+  .loading-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: var(--bg-page);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    z-index: 999;
+    transition: opacity 0.35s;
+  }
+  .loading-overlay.hidden { opacity: 0; pointer-events: none; }
+  .loading-spinner {
+    width: 36px; height: 36px;
+    border: 3px solid var(--border);
+    border-top-color: var(--c2);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+  .loading-text { margin-top: 16px; font-size: 14px; color: var(--text-muted); }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-spinner"></div>
+  <p class="loading-text">正在生成完整报告...</p>
+</div>
+<div class="page" id="pageRoot">
+
+  <svg class="decor-svg" viewBox="0 0 430 1800" preserveAspectRatio="xMidYMin slice" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="350" cy="80" r="100" fill="#FF9F43" opacity="0.06"/>
+    <circle cx="50" cy="350" r="80" fill="#FF6B6B" opacity="0.05"/>
+    <circle cx="380" cy="650" r="90" fill="#6BCB77" opacity="0.05"/>
+    <circle cx="30" cy="950" r="100" fill="#9B72CF" opacity="0.05"/>
+    <circle cx="350" cy="1250" r="80" fill="#4D96FF" opacity="0.05"/>
+    <circle cx="50" cy="1550" r="90" fill="#C77DFF" opacity="0.04"/>
+    <circle cx="80" cy="60" r="7" fill="#FFD93D" opacity="0.08">
+      <animate attributeName="cy" values="60;48;60" dur="3s" repeatCount="indefinite"/>
+    </circle>
+  </svg>
+
+  <div class="report-header">
+    <div class="child-name" id="childNameDisplay"></div>
+    <div class="birth-info" id="birthInfoDisplay"></div>
+  </div>
+
+  <!-- ═══ 简版罗盘 ═══ -->
+  <div id="compassRoot"></div>
+
+  <!-- ═══════════ 先天盘 ═══════════ -->
+  <div class="section-header anim-fade-up stagger-1">
+    <span class="section-icon" id="baseIcon">♥</span>
+    <span class="section-title">先天盘 · 天赋性格</span>
+  </div>
+  <div class="card anim-fade-up stagger-1"><p class="body-text" id="personalityText"></p></div>
+  <div class="card anim-fade-up stagger-1">
+    <h3 style="font-family:var(--font-display);font-size:18px;font-weight:400;margin-bottom:8px;">学习风格</h3>
+    <p class="body-text" id="learningText"></p>
+  </div>
+  <div class="card anim-fade-up stagger-1">
+    <h3 style="font-family:var(--font-display);font-size:18px;font-weight:400;margin-bottom:8px;">兴趣方向推荐</h3>
+    <div class="interest-tags" id="interestTags"></div>
+  </div>
+
+  <!-- ═══════════ 流年盘 ═══════════ -->
+  <div class="section-header anim-fade-up stagger-2">
+    <span class="section-icon" id="yearIcon">◎</span>
+    <span class="section-title">流年盘 · 季度养育指南</span>
+  </div>
+  <div class="card anim-fade-up stagger-2">
+    <p class="body-text mb-12" id="yearSummary"></p>
+    <div class="quarterly-grid">
+      <div class="quarter-item"><span class="q-label">1-3月</span><span class="q-text" id="q1text"></span></div>
+      <div class="quarter-item"><span class="q-label">4-6月</span><span class="q-text" id="q2text"></span></div>
+      <div class="quarter-item"><span class="q-label">7-9月</span><span class="q-text" id="q3text"></span></div>
+      <div class="quarter-item"><span class="q-label">10-12月</span><span class="q-text" id="q4text"></span></div>
+    </div>
+  </div>
+
+  <!-- ═══════════ 亲子合盘 ═══════════ -->
+  <div class="section-header anim-fade-up stagger-3">
+    <span class="section-icon" id="compIcon">♥</span>
+    <span class="section-title">亲子合盘</span>
+  </div>
+  <div id="compatibilitySection"></div>
+
+  <!-- ═══ Share ═══ -->
+  <div class="share-section">
+    <button class="btn-ghost" style="width:calc(100% - 32px);margin:0 16px;" onclick="handleShare()">
+      分享给其他妈妈
+    </button>
+  </div>
+
+</div>
+
+<script src="src/data/calculator.js"></script>
+<script src="src/data/content.js"></script>
+<script src="src/data/voice.js"></script>
+<script src="src/js/common.js"></script>
+<script>
+(function() {
+  var loadingEl = document.getElementById('loadingOverlay');
+  function hideLoading() {
+    if (loadingEl) { loadingEl.classList.add('hidden'); }
+  }
+
+  var p = getParams();
+
+  var childName = p.c_name || p.name;
+  var childYear = p.c_year || p.year;
+  var childMonth = p.c_month || p.month;
+  var childDay = p.c_day || p.day;
+  var childGender = p.c_gender || p.gender;
+  var momYear = p.m_year || p.momYear || 0;
+  var momMonth = p.m_month || p.momMonth || 0;
+  var momDay = p.m_day || p.momDay || 0;
+
+  if (!childName || !childYear || !childMonth || !childDay) {
+    hideLoading();
+    document.getElementById('pageRoot').innerHTML =
+      '<div class="page" style="display:flex;align-items:center;justify-content:center;text-align:center;">' +
+      '<div><p class="body-text">页面参数错误</p>' +
+      '<a href="input.html" class="btn-small mt-24">重新开始</a></div></div>';
+    return;
+  }
+
+  var lifeNum = calcLifeNumber(childYear, childMonth, childDay);
+  var yearNum = calcYearNumber(childMonth, childDay, getCurrentYear());
+  var numData = NUMBER_COLORS[lifeNum];
+  var content = getContent(lifeNum);
+  var momNum = (momYear && momMonth && momDay) ? calcLifeNumber(momYear, momMonth, momDay) : 0;
+
+  // ═══ Header ═══
+  document.getElementById('childNameDisplay').textContent = childName;
+  document.getElementById('birthInfoDisplay').textContent =
+    childYear + '年' + childMonth + '月' + childDay + '日 · 生命数 ' + lifeNum + '号';
+
+  // ═══ Mini Compass ═══
+  (function renderMiniCompass() {
+    var root = document.getElementById('compassRoot');
+    var color = numData.color;
+    var name = numData.name;
+    var coreTheme = content ? content.coreTheme : '';
+    var coreDesc = content ? content.coreDesc : '';
+
+    var svg =
+      '<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">' +
+        '<circle cx="100" cy="100" r="92" fill="none" stroke="' + color + '" stroke-width="3" opacity="0.15"/>' +
+        '<circle cx="100" cy="100" r="85" fill="none" stroke="' + color + '" stroke-width="1.5" opacity="0.08" stroke-dasharray="4,6"/>' +
+        (function() {
+          var t = '';
+          for (var i = 0; i < 24; i++) {
+            var a = (i * 15 - 90) * Math.PI / 180;
+            t += '<line x1="' + (100 + 88 * Math.cos(a)).toFixed(1) +
+                 '" y1="' + (100 + 88 * Math.sin(a)).toFixed(1) +
+                 '" x2="' + (100 + 95 * Math.cos(a)).toFixed(1) +
+                 '" y2="' + (100 + 95 * Math.sin(a)).toFixed(1) +
+                 '" stroke="' + color + '" stroke-width="1" opacity="0.2"/>';
+          }
+          return t;
+        })() +
+      '</svg>';
+
+    root.innerHTML =
+      '<div class="compass-mini">' +
+        '<div class="compass-mini-ring">' + svg +
+          '<div class="compass-mini-badge" style="background:' + color + ';">' +
+            '<span class="compass-mini-num">' + lifeNum + '</span>' +
+            '<span class="compass-mini-name">' + name + '</span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="compass-mini-core">' + coreTheme + '</div>' +
+        '<div class="compass-mini-desc">' + coreDesc + '</div>' +
+      '</div>';
+  })();
+
+  // ═══ Section icons ═══
+  document.getElementById('baseIcon').style.background = numData.color;
+  document.getElementById('yearIcon').style.background = NUMBER_COLORS[yearNum].color;
+  document.getElementById('compIcon').style.background = momNum ? NUMBER_COLORS[momNum].color : 'var(--c8)';
+
+  // ═══ 先天盘 ═══
+  if (content) {
+    document.getElementById('personalityText').textContent = content.personality;
+    document.getElementById('learningText').textContent = content.learning;
+    var tagsHtml = (content.interests || []).map(function(i) {
+      return '<span class="interest-tag">' + i + '</span>';
+    }).join('');
+    document.getElementById('interestTags').innerHTML = tagsHtml;
+  }
+
+  // ═══ 流年盘 ═══
+  var yearNumData = NUMBER_COLORS[yearNum];
+  if (content) {
+    document.getElementById('yearSummary').textContent =
+      childName + '今年进入 ' + yearNum + ' 号流年（' + yearNumData.theme + '），以下是四个季度的养育重点：';
+    document.getElementById('q1text').textContent = content.quarterly.Q1;
+    document.getElementById('q2text').textContent = content.quarterly.Q2;
+    document.getElementById('q3text').textContent = content.quarterly.Q3;
+    document.getElementById('q4text').textContent = content.quarterly.Q4;
+  }
+
+  // ═══════════════════════════════════
+  //  亲子合盘（全新重做）
+  // ═══════════════════════════════════
+  var compSection = document.getElementById('compatibilitySection');
+
+  if (momNum) {
+    var ss = getSynergyScore(momNum, lifeNum);
+    var sy = getSynastry(momNum, lifeNum);
+    var voiceSy = (typeof genSynastryText === 'function')
+      ? genSynastryText('', childName, momNum, lifeNum, childGender)
+      : { momStyle: sy.momTrait, childReaction: sy.childTrait, coreLesson: sy.lesson };
+    var momData = NUMBER_COLORS[momNum];
+    var childData = numData;
+    var momColor = momData.color;
+    var childColor = childData.color;
+    var score = ss.score;
+    var scorePct = score + '%';
+
+    /* ── 一、双圆能量对比图 ── */
+    var dualSvg =
+      '<svg viewBox="0 0 300 220" xmlns="http://www.w3.org/2000/svg">' +
+        '<defs>' +
+          '<linearGradient id="rainbowWave" x1="0%" y1="0%" x2="100%" y2="0%">' +
+            '<stop offset="0%" stop-color="' + momColor + '" stop-opacity="0.9"/>' +
+            '<stop offset="30%" stop-color="' + momColor + '" stop-opacity="0.6"/>' +
+            '<stop offset="50%" stop-color="#FFD93D" stop-opacity="0.8"/>' +
+            '<stop offset="70%" stop-color="' + childColor + '" stop-opacity="0.6"/>' +
+            '<stop offset="100%" stop-color="' + childColor + '" stop-opacity="0.9"/>' +
+          '</linearGradient>' +
+        '</defs>' +
+        '<!-- wavy connection -->' +
+        '<path d="M115,85 C125,55 135,115 145,85 C155,55 165,115 175,85 C185,55 195,115 205,85"' +
+          ' fill="none" stroke="url(#rainbowWave)" stroke-width="3.5" stroke-linecap="round" opacity="0.7"/>' +
+        '<!-- center dot -->' +
+        '<circle cx="160" cy="85" r="5" fill="#FFD93D" opacity="0.9">' +
+          '<animate attributeName="r" values="5;7;5" dur="2s" repeatCount="indefinite"/>' +
+        '</circle>' +
+        '<!-- Left: Mom circle -->' +
+        '<circle cx="80" cy="85" r="52" fill="' + momColor + '" opacity="0.1"/>' +
+        '<circle cx="80" cy="85" r="52" fill="none" stroke="' + momColor + '" stroke-width="2.5" opacity="0.35"/>' +
+        '<circle cx="80" cy="85" r="40" fill="' + momColor + '" opacity="0.9"/>' +
+        '<text x="80" y="80" text-anchor="middle" fill="#fff" font-size="32" font-family="\'Ma Shan Zheng\', cursive">' + momNum + '</text>' +
+        '<text x="80" y="100" text-anchor="middle" fill="#fff" font-size="12" font-family="\'Noto Sans SC\', sans-serif" font-weight="500">妈妈</text>' +
+        '<!-- Right: Child circle -->' +
+        '<circle cx="220" cy="85" r="52" fill="' + childColor + '" opacity="0.1"/>' +
+        '<circle cx="220" cy="85" r="52" fill="none" stroke="' + childColor + '" stroke-width="2.5" opacity="0.35"/>' +
+        '<circle cx="220" cy="85" r="40" fill="' + childColor + '" opacity="0.9"/>' +
+        '<text x="220" y="80" text-anchor="middle" fill="#fff" font-size="32" font-family="\'Ma Shan Zheng\', cursive">' + lifeNum + '</text>' +
+        '<text x="220" y="100" text-anchor="middle" fill="#fff" font-size="12" font-family="\'Noto Sans SC\', sans-serif" font-weight="500">' + childName + '</text>' +
+      '</svg>';
+
+    var dualLabels =
+      '<div class="compat-dual-labels">' +
+        '<div class="compat-dual-label"><span class="dual-label-color" style="color:' + momColor + ';">' + momData.name + '</span><br><span class="dual-label-name">' + momData.personality + '</span></div>' +
+        '<div class="compat-dual-label"><span class="dual-label-color" style="color:' + childColor + ';">' + childData.name + '</span><br><span class="dual-label-name">' + childData.personality + '</span></div>' +
+      '</div>';
+
+    /* ── 二、亲子相性打分 ── */
+    var scoreCard =
+      '<div class="synergy-card anim-fade-up stagger-3">' +
+        '<div class="synergy-score-row">' +
+          '<span class="synergy-label">亲子相性</span>' +
+          '<span class="synergy-score-num">' + score + '分</span>' +
+        '</div>' +
+        '<div class="synergy-bar-track"><div class="synergy-bar-fill" id="synergyBarFill" style="width:0%;"></div></div>' +
+        '<span class="synergy-type-tag">' + ss.type + '</span>' +
+        '<p class="synergy-summary">' + ss.summary + '</p>' +
+      '</div>';
+
+    /* ── 三、关系模式解读 ── */
+    // Layer 1: Tags
+    var tagColors = [momColor, childColor, '#C77DFF'];
+    var tagsHtml = '<div class="relation-tags">';
+    for (var ti = 0; ti < sy.tags.length; ti++) {
+      tagsHtml += '<span class="relation-tag-capsule" style="background:' + tagColors[ti] + ';">' + sy.tags[ti] + '</span>';
+    }
+    tagsHtml += '</div>';
+
+    // Layer 2: Interpretation
+    var interpHtml =
+      '<p>' + voiceSy.momStyle + '</p>' +
+      '<p>' + voiceSy.childReaction + '</p>' +
+      '<p>' + sy.collision + '</p>' +
+      '<span class="relation-lesson" style="color:' + childColor + ';">' + voiceSy.coreLesson + '</span>';
+
+    // Layer 3: Golden quote
+    var quoteCard =
+      '<div class="golden-quote-card anim-fade-up stagger-3" style="background:linear-gradient(135deg,' + momColor + '10,' + childColor + '10);">' +
+        '<p class="golden-quote-text">"' + sy.goldenQuote + '"</p>' +
+      '</div>';
+
+    var interpretCard =
+      '<div class="card anim-fade-up stagger-3" style="background:var(--bg-warm);">' +
+        tagsHtml +
+        '<div class="relation-interp">' + interpHtml + '</div>' +
+      '</div>';
+
+    /* ── 四、冲突高发场景 ── */
+    var conflictColors = ['#FF6B6B', '#FF9F43', '#FFD93D'];
+    var conflictKeywordsColors = ['#FF6B6B', '#FF9F43', '#C77DFF'];
+    var conflictHtml = '';
+    for (var ci = 0; ci < sy.conflicts.length; ci++) {
+      var cf = sy.conflicts[ci];
+      conflictHtml +=
+        '<div class="conflict-card" style="border-left:3px solid ' + conflictColors[ci] + ';">' +
+          '<div class="conflict-scene">' + cf.scene + '</div>' +
+          '<div class="conflict-reason">' + cf.reason + '</div>' +
+          '<span style="font-size:10px;color:var(--text-muted);">💡 破局关键词 </span>' +
+          '<span class="conflict-keyword" style="background:' + conflictKeywordsColors[ci] + ';">' + cf.keyword + '</span>' +
+        '</div>';
+    }
+
+    var conflictSection =
+      '<div class="section-header anim-fade-up stagger-3">' +
+        '<span class="section-icon" style="background:var(--c1);">⚡</span>' +
+        '<span class="section-title">为什么总在这里起冲突</span>' +
+      '</div>' +
+      '<div style="margin:0 16px 12px;">' + conflictHtml + '</div>';
+
+    /* ── 五、化解方法 ── */
+    var voiceTips = (typeof genTips === 'function')
+      ? genTips(momNum, lifeNum, childName, childGender)
+      : sy.solutions;
+
+    var solutionsHtml = '';
+    for (var si = 0; si < voiceTips.length; si++) {
+      var sol = voiceTips[si];
+      solutionsHtml +=
+        '<div class="solution-item">' +
+          '<div style="display:flex;align-items:center;">' +
+            '<span class="solution-num">' + (si + 1) + '</span>' +
+            '<span class="solution-title">' + sol.title + '</span>' +
+          '</div>' +
+          '<div class="solution-action">' + sol.action + '</div>' +
+          '<div class="solution-example">📍 ' + sol.example + '</div>' +
+        '</div>';
+    }
+
+    var solutionsSection =
+      '<div class="section-header anim-fade-up stagger-3">' +
+        '<span class="section-icon" style="background:var(--c4);">✓</span>' +
+        '<span class="section-title">妈妈今天就能用的3个方法</span>' +
+      '</div>' +
+      '<div class="card anim-fade-up stagger-3">' + solutionsHtml + '</div>';
+
+    /* ── 六、妈妈教育盲点 ── */
+    var blindspotSection =
+      '<div class="section-header anim-fade-up stagger-3">' +
+        '<span class="section-icon" style="background:' + momColor + ';">' + momNum + '</span>' +
+        '<span class="section-title">妈妈的自我觉察</span>' +
+      '</div>' +
+      '<div class="blindspot-card-v2 anim-fade-up stagger-3" style="background:' + momColor + '08;">' +
+        '<div class="blindspot-label">💛 给' + momNum + '号妈妈的悄悄话</div>' +
+        '<p class="blindspot-pattern">' + sy.blindspotPattern + '</p>' +
+        '<p class="blindspot-warning" style="color:' + momColor + ';">' + sy.blindspotWarning + '</p>' +
+      '</div>';
+
+    /* ── 七、爸爸合盘入口 ── */
+    var dadSection =
+      '<div class="dad-card anim-fade-up stagger-3">' +
+        '<div class="dad-title">👨 加入爸爸的数字</div>' +
+        '<p class="dad-subtitle">查看爸爸+孩子的相处模式，以及三方家庭能量如何平衡</p>' +
+        '<form id="dadForm" autocomplete="off" novalidate>' +
+          '<div class="dad-form-row">' +
+            '<select id="dadYear" required></select>' +
+            '<select id="dadMonth" required></select>' +
+            '<select id="dadDay" required></select>' +
+          '</div>' +
+          '<button type="submit" class="btn-primary" style="font-size:14px;padding:12px;">生成三方合盘</button>' +
+        '</form>' +
+      '</div>';
+
+    /* ── Mom info + retry ── */
+    var retrySection =
+      '<div class="card-warm text-center anim-fade-up stagger-3" style="margin-top:12px;">' +
+        '<p class="body-text">妈妈的生日：' + momYear + '年' + momMonth + '月' + momDay + '日 · 生命数 ' + momNum + '号（' + momData.name + '）</p>' +
+        '<p class="caption mt-12">想查看不同的亲子组合？</p>' +
+        '<form id="momRetryForm" autocomplete="off" novalidate>' +
+          '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:8px 0;">' +
+            '<select id="retryMomYear" required></select>' +
+            '<select id="retryMomMonth" required></select>' +
+            '<select id="retryMomDay" required></select>' +
+          '</div>' +
+          '<button type="submit" class="btn-small">重新计算合盘</button>' +
+        '</form>' +
+      '</div>';
+
+    // Assemble
+    compSection.innerHTML =
+      '<div class="compat-dual anim-fade-up stagger-3">' + dualSvg + '</div>' +
+      dualLabels +
+      scoreCard +
+      interpretCard +
+      quoteCard +
+      conflictSection +
+      solutionsSection +
+      blindspotSection +
+      dadSection +
+      retrySection;
+
+    hideLoading();
+
+    // Populate forms + animate
+    setTimeout(function() {
+      document.getElementById('retryMomYear').innerHTML = generateYearOptions(1960, getCurrentYear());
+      document.getElementById('retryMomMonth').innerHTML = generateMonthOptions();
+      document.getElementById('retryMomDay').innerHTML = generateDayOptions();
+      document.getElementById('dadYear').innerHTML = generateYearOptions(1960, getCurrentYear());
+      document.getElementById('dadMonth').innerHTML = generateMonthOptions();
+      document.getElementById('dadDay').innerHTML = generateDayOptions();
+
+      document.getElementById('momRetryForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        var my = parseInt(document.getElementById('retryMomYear').value);
+        var mm = parseInt(document.getElementById('retryMomMonth').value);
+        var md = parseInt(document.getElementById('retryMomDay').value);
+        if (!my || !mm || !md) { alert('请选择完整的妈妈生日'); return; }
+        navigate('report-full.html', {
+          c_name: childName, c_year: childYear, c_month: childMonth, c_day: childDay, c_gender: childGender,
+          m_year: my, m_month: mm, m_day: md, unlocked: true
+        });
+      });
+
+      document.getElementById('dadForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        var dy = parseInt(document.getElementById('dadYear').value);
+        var dm = parseInt(document.getElementById('dadMonth').value);
+        var dd = parseInt(document.getElementById('dadDay').value);
+        if (!dy || !dm || !dd) { alert('请选择完整的爸爸生日'); return; }
+        navigate('report-full.html', {
+          c_name: childName, c_year: childYear, c_month: childMonth, c_day: childDay, c_gender: childGender,
+          m_year: dy, m_month: dm, m_day: dd, unlocked: true
+        });
+      });
+
+      // Animate score bar
+      setTimeout(function() {
+        var fill = document.getElementById('synergyBarFill');
+        if (fill) fill.style.width = scorePct;
+      }, 300);
+    }, 50);
+
+  } else {
+    // No mom data — show input form
+    compSection.innerHTML =
+      '<div class="card-warm text-center anim-fade-up stagger-3">' +
+        '<p class="body-text" style="margin-bottom:12px;">输入妈妈的生日，查看亲子合盘</p>' +
+        '<form id="momInputForm" autocomplete="off" novalidate>' +
+          '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px;">' +
+            '<select id="fullMomYear" required style="padding:12px 6px;border:1.5px solid var(--border);border-radius:var(--radius-input);font-size:14px;font-family:var(--font-body);background:var(--bg-card);-webkit-appearance:none;appearance:none;"></select>' +
+            '<select id="fullMomMonth" required style="padding:12px 6px;border:1.5px solid var(--border);border-radius:var(--radius-input);font-size:14px;font-family:var(--font-body);background:var(--bg-card);-webkit-appearance:none;appearance:none;"></select>' +
+            '<select id="fullMomDay" required style="padding:12px 6px;border:1.5px solid var(--border);border-radius:var(--radius-input);font-size:14px;font-family:var(--font-body);background:var(--bg-card);-webkit-appearance:none;appearance:none;"></select>' +
+          '</div>' +
+          '<button type="submit" class="btn-primary" style="font-size:14px;padding:12px;">查看亲子合盘</button>' +
+        '</form>' +
+      '</div>' +
+      '<div class="dad-card anim-fade-up stagger-3">' +
+        '<div class="dad-title">👨 也可以先看看爸爸和孩子的合盘</div>' +
+        '<p class="dad-subtitle">查看爸爸+孩子的相处模式</p>' +
+        '<form id="dadForm2" autocomplete="off" novalidate>' +
+          '<div class="dad-form-row">' +
+            '<select id="dadYear2" required></select>' +
+            '<select id="dadMonth2" required></select>' +
+            '<select id="dadDay2" required></select>' +
+          '</div>' +
+          '<button type="submit" class="btn-ghost" style="font-size:14px;padding:10px;">查看爸爸合盘</button>' +
+        '</form>' +
+      '</div>';
+
+    hideLoading();
+
+    setTimeout(function() {
+      document.getElementById('fullMomYear').innerHTML = generateYearOptions(1960, getCurrentYear());
+      document.getElementById('fullMomMonth').innerHTML = generateMonthOptions();
+      document.getElementById('fullMomDay').innerHTML = generateDayOptions();
+      document.getElementById('dadYear2').innerHTML = generateYearOptions(1960, getCurrentYear());
+      document.getElementById('dadMonth2').innerHTML = generateMonthOptions();
+      document.getElementById('dadDay2').innerHTML = generateDayOptions();
+
+      document.getElementById('momInputForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        var my = parseInt(document.getElementById('fullMomYear').value);
+        var mm = parseInt(document.getElementById('fullMomMonth').value);
+        var md = parseInt(document.getElementById('fullMomDay').value);
+        if (!my || !mm || !md) { alert('请选择完整的妈妈生日'); return; }
+        navigate('report-full.html', {
+          c_name: childName, c_year: childYear, c_month: childMonth, c_day: childDay, c_gender: childGender,
+          m_year: my, m_month: mm, m_day: md, unlocked: true
+        });
+      });
+
+      document.getElementById('dadForm2').addEventListener('submit', function(e) {
+        e.preventDefault();
+        var dy = parseInt(document.getElementById('dadYear2').value);
+        var dm = parseInt(document.getElementById('dadMonth2').value);
+        var dd = parseInt(document.getElementById('dadDay2').value);
+        if (!dy || !dm || !dd) { alert('请选择完整的爸爸生日'); return; }
+        navigate('report-full.html', {
+          c_name: childName, c_year: childYear, c_month: childMonth, c_day: childDay, c_gender: childGender,
+          m_year: dy, m_month: dm, m_day: dd, unlocked: true
+        });
+      });
+    }, 50);
+  }
+
+  // ═══ Share ═══
+  window.handleShare = function() {
+    var shareText = childName + '的生命数字是' + lifeNum + '号宝宝（' + numData.name + '），' + numData.theme + '。快来测测你家孩子的天赋密码！';
+    var shareUrl = window.location.origin + window.location.pathname.replace('report-full.html','') + 'index.html';
+    shareContent({ title: '发现孩子的天赋密码', text: shareText, url: shareUrl });
+  };
+})();
+</script>
+</body>
+</html>

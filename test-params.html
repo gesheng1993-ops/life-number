@@ -1,0 +1,11 @@
+<!DOCTYPE html><html><body>
+<h1 id="out"></h1>
+<script src="src/js/common.js"></script>
+<script>
+var p = getParams();
+var out = [];
+for (var k in p) { out.push(k + '=' + p[k]); }
+document.getElementById('out').textContent = out.join('\n') || 'ALL EMPTY';
+console.log(out);
+</script>
+</body></html>
