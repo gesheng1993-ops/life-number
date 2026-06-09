@@ -404,13 +404,18 @@
   // ═══ Strength & XiJi computation ═══
   var strengthData = null;
   var xijiData = null;
+  var xijiCalibration = null;
+  var xijiTransit = null;
   var baziAvatarKey = '';
   var dayWxColor = '#FFD93D';
   var WX_COLORS = {木:'#6BCB77',火:'#FF6B6B',土:'#FFD93D',金:'#C4A882',水:'#4D96FF'};
   try {
     if (baziData) {
       strengthData = calcStrength(baziData);
-      xijiData = calcXiJi(dayMasterWX, strengthData.isStrong);
+      var xijiVector = calcXiJiVector(baziData, strengthData, new Date().getFullYear());
+      xijiData = xijiVector.final;
+      xijiCalibration = xijiVector.calibration;
+      xijiTransit = xijiVector.transit;
       baziAvatarKey = baziData.dayMaster + '-' + (strengthData.isStrong ? '强' : '弱');
       dayWxColor = WX_COLORS[dayMasterWX] || '#FFD93D';
     }
@@ -1219,9 +1224,53 @@
 
       // Build the meaning text
       var xiNames = xijiData.xi.map(function(it) { return it.wx; }).join('、');
-      var strengthDesc = strengthData.isStrong
-        ? '能量充足，需要流动和释放。多给孩子自由探索的空间，在运动、表达、创造中释放能量。'
-        : '能量偏弱，需要滋养和支撑。给孩子创造一个温暖、有安全感的环境，让他慢慢积累成长的底气。';
+      var strengthDesc = isAdult
+        ? (strengthData.isStrong
+          ? '你的能量充沛，适合向外释放和表达。你需要行动和创造，而不是等待和犹豫。让自己的能量在事业、运动、创作中流动起来，停滞会让你焦虑。'
+          : '你的能量偏内收，需要滋养和积累。你不适合硬拼，你的力量在深度和专注里。给自己创造一个有安全感的节奏，慢慢来反而更快。')
+        : (strengthData.isStrong
+          ? '能量充足，需要流动和释放。多给孩子自由探索的空间，在运动、表达、创造中释放能量。'
+          : '能量偏弱，需要滋养和支撑。给孩子创造一个温暖、有安全感的环境，让他慢慢积累成长的底气。');
+
+      // Transit analysis rendering (adult only, shows when calibration matches current year)
+      var transitHtml = '';
+      if (isAdult && xijiTransit) {
+        var interactionsHtml = '';
+        for (var ti = 0; ti < xijiTransit.branchInteractions.length; ti++) {
+          var inter = xijiTransit.branchInteractions[ti];
+          interactionsHtml +=
+            '<div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:6px;font-size:13px;line-height:1.6;">' +
+              '<span style="color:#C0392B;font-weight:600;white-space:nowrap;">' + inter.type + '</span>' +
+              '<span style="color:#3A2E2E;">' + inter.copy + '</span>' +
+            '</div>';
+        }
+        transitHtml =
+          '<div style="margin-top:14px;padding:14px;background:#FFF8F8;border-left:3px solid #C0392B;border-radius:0 10px 10px 0;">' +
+            '<div style="font-size:12px;color:#C0392B;font-weight:600;margin-bottom:6px;">' +
+              '⚠️ ' + xijiTransit.yearNum + '年（' + xijiTransit.yearGanZhi + '）流年实际引动：' + xijiTransit.actualResult +
+            '</div>' +
+            '<div style="font-size:13px;color:#3A2E2E;line-height:1.85;margin-bottom:8px;">' +
+              xijiTransit.actualCopy +
+            '</div>' +
+            '<div style="font-size:12px;color:#8C7A6B;margin-top:8px;">' +
+              '<strong>天干：</strong>' + xijiTransit.ganEffect + '<br>' +
+              '<strong>地支：</strong>' + xijiTransit.zhiEffect +
+            '</div>' +
+            interactionsHtml +
+            '<div style="font-size:12px;color:#8C7A6B;margin-top:8px;padding-top:8px;border-top:1px solid #EDE0D5;">' +
+              '受影响领域：' + xijiTransit.lifeAreas +
+            '</div>' +
+          '</div>';
+      }
+
+      // Calibration pattern tag
+      var calibrationTag = '';
+      if (isAdult && xijiCalibration) {
+        calibrationTag =
+          '<div style="font-size:12px;color:#8C7A6B;margin-bottom:6px;">' +
+            '🧬 命盘特征：' + xijiCalibration.patternName + ' · ' + xijiCalibration.wealthInterval +
+          '</div>';
+      }
 
       strengthSection =
         '<div class="section-header anim-fade-up" style="margin-top:4px;">' +
@@ -1232,6 +1281,7 @@
           (avatarSvg ? '<div class="bazi-strength-avatar">' + avatarSvg + '</div>' : '') +
           '<div class="bazi-strength-label">' + baziData.dayMaster + dayMasterWX + '日主 · ' + strengthData.level + '</div>' +
           '<div class="bazi-strength-desc">' + strengthData.desc + '</div>' +
+          calibrationTag +
           '<div class="bazi-xiji-divider"></div>' +
           '<div class="bazi-xiji-row">' +
             '<span class="bazi-xiji-row-label">喜用神</span>' +
@@ -1242,9 +1292,11 @@
             '<div class="bazi-xiji-tags">' + jiTagsHtml + '</div>' +
           '</div>' +
           '<p class="bazi-xiji-meaning">' +
-            '<strong>' + childName + '</strong>喜<strong>' + xiNames + '</strong>的能量，' +
-            strengthDesc +
+            (isAdult
+              ? '你喜<strong>' + xiNames + '</strong>的能量，' + strengthDesc
+              : '<strong>' + childName + '</strong>喜<strong>' + xiNames + '</strong>的能量，' + strengthDesc) +
           '</p>' +
+          transitHtml +
         '</div>';
     }
 
@@ -1256,8 +1308,8 @@
       '</div>' +
       '<div class="card anim-fade-up" style="text-align:center;">' +
         '<div class="geju-badge">' + gejuData.name + '</div>' +
-        '<p class="geju-desc">' + gejuData.desc + '</p>' +
-        '<div class="geju-tip">💡 ' + gejuData.tip + '</div>' +
+        '<p class="geju-desc">' + (isAdult && gejuData.adultDesc ? gejuData.adultDesc : gejuData.desc) + '</p>' +
+        '<div class="geju-tip">💡 ' + (isAdult && gejuData.adultTip ? gejuData.adultTip : gejuData.tip) + '</div>' +
       '</div>';
 
     // 4. 双盘联动 / BaZi-Life Number link
