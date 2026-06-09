@@ -17,6 +17,8 @@ function getParams() {
     m_year:   parseInt(p.get('m_year')) || 0,
     m_month:  parseInt(p.get('m_month')) || 0,
     m_day:    parseInt(p.get('m_day')) || 0,
+    // type (baby/adult)
+    type:     p.get('type') || 'baby',
     // v1 backwards compat (fallback when c_ not present)
     name:     p.get('c_name') || p.get('name') || '',
     year:     parseInt(p.get('c_year') || p.get('year')) || 0,

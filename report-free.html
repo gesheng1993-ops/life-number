@@ -193,8 +193,30 @@
 </head>
 <body>
 <div class="loading-overlay" id="loadingOverlay">
-  <div class="loading-spinner"></div>
-  <p class="loading-text">正在计算天赋密码...</p>
+  <svg width="60" height="60" viewBox="0 0 60 60">
+    <style>
+      @keyframes rainbow-spin {
+        0%   { stroke-dashoffset: 160; }
+        100% { stroke-dashoffset: 0; }
+      }
+    </style>
+    <circle cx="30" cy="30" r="25" fill="none"
+      stroke="#FF6B6B" stroke-width="4"
+      stroke-dasharray="40 120"
+      style="animation: rainbow-spin 1.5s linear infinite"/>
+    <circle cx="30" cy="30" r="25" fill="none"
+      stroke="#FFD93D" stroke-width="4"
+      stroke-dasharray="40 120"
+      stroke-dashoffset="-53"
+      style="animation: rainbow-spin 1.5s linear infinite 0.2s"/>
+    <circle cx="30" cy="30" r="25" fill="none"
+      stroke="#6BCB77" stroke-width="4"
+      stroke-dasharray="40 120"
+      stroke-dashoffset="-106"
+      style="animation: rainbow-spin 1.5s linear infinite 0.4s"/>
+  </svg>
+  <p class="loading-text" id="loadingText">正在计算天赋密码...</p>
+  <p style="font-size:11px;color:#C4A882;margin-top:4px;" id="loadingSub">每份报告独立生成，约需10-20秒</p>
 </div>
 <div class="page" id="pageRoot">
 
@@ -206,6 +228,7 @@
     <circle cx="60" cy="1200" r="80" fill="#4D96FF" opacity="0.05"/>
   </svg>
 
+  <div id="reportContent">
   <div class="report-header">
     <div class="child-name" id="childNameDisplay"></div>
     <div class="birth-info" id="birthInfoDisplay"></div>
@@ -243,8 +266,8 @@
        第三层：缺失数字分析
        ═══════════════════════════ -->
   <div class="section-header anim-fade-up stagger-3">
-    <span class="section-icon" style="background:var(--c2);">!</span>
-    <span class="section-title">需要重点培养的能力</span>
+    <span class="section-icon" id="secIcon3">!</span>
+    <span class="section-title" id="missingSectionTitle">需要重点培养的能力</span>
   </div>
   <div class="card-highlight anim-fade-up stagger-3" id="missingSection"></div>
 
@@ -256,7 +279,7 @@
   <!-- ═══ 先天性格 ═══ -->
   <div class="section-header anim-fade-up stagger-4">
     <span class="section-icon" id="secIcon4">♥</span>
-    <span class="section-title">先天性格</span>
+    <span class="section-title" id="personalitySectionTitle">先天性格</span>
   </div>
   <div class="card anim-fade-up stagger-4">
     <p class="body-text" id="personalityText"></p>
@@ -265,7 +288,7 @@
   <!-- ═══ 天生优势 ═══ -->
   <div class="section-header anim-fade-up stagger-5">
     <span class="section-icon" id="secIcon5">★</span>
-    <span class="section-title">天生就比别人强的地方</span>
+    <span class="section-title" id="strengthSectionTitle">老天给的"带刀天赋"</span>
   </div>
   <div class="card anim-fade-up stagger-5">
     <ul class="strength-list" id="strengthList"></ul>
@@ -274,27 +297,37 @@
   <!-- ═══ 养育指引 ═══ -->
   <div class="section-header anim-fade-up stagger-6">
     <span class="section-icon" id="secIcon6">☀</span>
-    <span class="section-title">妈妈今天就能用的3个方法</span>
+    <span class="section-title" id="tipsSectionTitle">妈妈今天就能用的3个方法</span>
   </div>
   <div class="card anim-fade-up stagger-6">
     <ol class="tips-list" id="tipsList"></ol>
   </div>
 
+
+  <!-- ═══ 流年解读（成人版） ═══ -->
+  <div id="yearThemeSection" style="display:none;">
+    <div class="section-header anim-fade-up stagger-7">
+      <span class="section-icon" id="secIcon7">◎</span>
+      <span class="section-title" id="yearThemeTitle">今年的流年主题</span>
+    </div>
+    <div class="card anim-fade-up stagger-7" id="yearThemeCard"></div>
+  </div>
   <!-- ═══ 付费解锁 ═══ -->
   <div class="paywall-card anim-fade-up stagger-7">
-    <div class="paywall-title">解锁完整成长方案</div>
+    <div class="paywall-title" id="paywallTitle">解锁完整成长方案</div>
     <div class="paywall-price">¥29</div>
     <p class="caption" style="margin-top:2px;">一次购买，永久可看</p>
     <ul class="paywall-list">
-      <li>完整能量罗盘（六维天赋雷达图）</li>
-      <li>流年解读·今年按季度养育重点</li>
-      <li>亲子合盘·和妈妈的相处密码</li>
-      <li>缺失数字强化·具体活动推荐清单</li>
+      <li id="paywallItem1">完整能量罗盘（六维天赋雷达图）</li>
+      <li id="paywallItem2">流年解读·今年按季度养育重点</li>
+      <li id="paywallItem3">亲子合盘·和妈妈的相处密码</li>
+      <li id="paywallItem4">缺失数字强化·具体活动推荐清单</li>
     </ul>
     <button class="btn-pay" id="btnUnlock" style="display:block;width:calc(100% - 32px);margin:0 16px;background:var(--btn-gradient);box-shadow:var(--btn-shadow);border-radius:var(--radius-btn);color:#fff;font-size:16px;font-weight:500;font-family:var(--font-body);padding:16px 24px;border:none;cursor:pointer;">¥29 立即解锁</button>
-    <p class="caption mt-12">购买后联系微信获取完整报告</p>
+    <p class="caption mt-12" id="paywallBottomCaption">购买后联系微信获取完整报告</p>
   </div>
 
+</div><!-- /#reportContent -->
 </div>
 
 <script src="src/data/calculator.js"></script>
@@ -302,15 +335,23 @@
 <script src="src/data/avatars.js"></script>
 <script src="src/data/bazi.js"></script>
 <script src="src/data/deepContent.js"></script>
+<script src="src/data/adult-content.js"></script>
+<script src="src/data/wealth.js"></script>
+<script src="src/data/aiReport.js"></script>
 <script src="src/data/voice.js"></script>
 <script src="src/data/avatarsBazi.js"></script>
 <script src="src/js/common.js"></script>
 <script>
-(function() {
+(async function() {
   var loadingEl = document.getElementById('loadingOverlay');
   function hideLoading() {
     if (loadingEl) { loadingEl.classList.add('hidden'); }
+    var rc = document.getElementById('reportContent');
+    if (rc) rc.style.display = 'block';
   }
+  // Hide reportContent initially (shown after loading)
+  var rcInit = document.getElementById('reportContent');
+  if (rcInit) rcInit.style.display = 'none';
 
   var p = getParams();
 
@@ -335,7 +376,9 @@
   var freq = countDigitFrequency(childYear, childMonth, childDay);
   var missingNums = calcMissingNumbers(childYear, childMonth, childDay);
   var connections = getConnections(freq);
-  var iconColor = numData ? numData.color : '#FF6B6B';
+  var isAdult = p.type === 'adult';
+  var adultColor = '#9B72CF';
+  var iconColor = isAdult ? adultColor : (numData ? numData.color : '#FF6B6B');
 
   // ═══ BaZi computation ═══
   var baziData = null;
@@ -375,13 +418,117 @@
     console.warn('Strength/XiJi calc:', e);
   }
 
+  // ═══ AI Report Generation ═══
+  // 如果启用AI且代理端点已配置，尝试AI生成，失败时自动降级到静态模板
+  if (typeof AI_CONFIG !== 'undefined' && AI_CONFIG.enabled && AI_CONFIG.endpoint) {
+    try {
+      var yearNum = calcYearNumber(childMonth, childDay, getCurrentYear());
+      var xiWXList = xijiData ? xijiData.xi.map(function(x) { return x.wx; }) : [];
+      var jiWXList = xijiData ? xijiData.ji.map(function(x) { return x.wx; }) : [];
+      var wealthAI = null;
+      if (isAdult && baziData && wuXingData && strengthData) {
+        try { wealthAI = calcWealthPattern(baziData, wuXingData, strengthData, lifeNum); } catch(e) {}
+      }
+      var userData = {
+        name: childName,
+        gender: childGender || 'male',
+        lifeNum: lifeNum,
+        yearNum: yearNum,
+        dayMaster: baziData ? baziData.dayMaster : '',
+        dayMasterWX: dayMasterWX,
+        isStrong: strengthData ? strengthData.isStrong : false,
+        strengthLevel: strengthData ? strengthData.level : '',
+        wuXing: wuXingData || { count: {木:0,火:0,土:0,金:0,水:0}, missing: [], strong: [] },
+        missingNumbers: missingNums,
+        missingWX: wuXingData ? wuXingData.missing : [],
+        wealthPattern: wealthAI,
+        xiWX: xiWXList,
+        jiWX: jiWXList,
+        bazi: baziData || { year:{gan:'',zhi:''}, month:{gan:'',zhi:''}, day:{gan:'',zhi:''}, hasHour:false, dayMaster:'' },
+        isAdult: isAdult,
+        momNum: p.m_num || null,
+        childNum: lifeNum
+      };
+      // 更新加载文案为AI生成模式
+      var ltEl = document.getElementById('loadingText');
+      if (ltEl) ltEl.textContent = '正在解读你的生命数字...';
+      var lsEl = document.getElementById('loadingSub');
+      if (lsEl) lsEl.style.display = '';
+
+      var aiReport = await generatePersonalReport(userData);
+      if (aiReport) {
+        // 设置header
+        document.getElementById('childNameDisplay').textContent =
+          isAdult ? (childName + ' · ' + lifeNum + '号 · ' + numData.name + '能量') : childName;
+        document.getElementById('birthInfoDisplay').textContent =
+          childYear + '年' + childMonth + '月' + childDay + '日';
+        // 渲染personality card容器（由renderAIReport填充内容）
+        var pRoot = document.getElementById('personalityRoot');
+        if (pRoot) {
+          var avatar = typeof getAvatar === 'function' ? getAvatar(lifeNum) : '';
+          pRoot.innerHTML =
+            '<div class="personality-card anim-fade-up" style="background:linear-gradient(135deg,' + numData.color + '18,' + numData.color + '0A);">' +
+              '<h1 class="personality-title">' + childName + ' · ' + lifeNum + '号 · ' + (numData.personality || '') + '</h1>' +
+              '<p class="personality-subtitle">' + numData.name + '能量 · ' + numData.theme + '</p>' +
+              '<div class="personality-avatar">' + avatar + '</div>' +
+              '<p class="personality-energy" id="aiOpening"></p>' +
+            '</div>';
+        }
+        // AI渲染
+        renderAIReport(aiReport, userData);
+        // 隐藏AI模式不需要的静态分析区块
+        var hideIds = ['numGridWrapper', 'connectionsSection', 'baziSection'];
+        for (var hi = 0; hi < hideIds.length; hi++) {
+          var he = document.getElementById(hideIds[hi]);
+          if (he) he.style.display = 'none';
+        }
+        // 也隐藏grid的section header
+        var gridSections = document.querySelectorAll('.section-header');
+        for (var gs = 0; gs < gridSections.length; gs++) {
+          var nextEl = gridSections[gs].nextElementSibling;
+          if (nextEl && (nextEl.id === 'numGridWrapper' || nextEl.querySelector('#numGridWrapper'))) {
+            gridSections[gs].style.display = 'none';
+          }
+        }
+        // 更新section icons
+        var sectionIcons = document.querySelectorAll('.section-icon');
+        for (var sii = 0; sii < sectionIcons.length; sii++) {
+          sectionIcons[sii].style.background = iconColor;
+        }
+        // 成人版section headers
+        if (isAdult) {
+          var elM = document.getElementById('missingSectionTitle');
+          if (elM) elM.textContent = '人生课题';
+          var elP = document.getElementById('personalitySectionTitle');
+          if (elP) elP.textContent = '🔮 灵魂出厂设置与搞钱本能';
+          var elS = document.getElementById('strengthSectionTitle');
+          if (elS) elS.textContent = '🔥 老天赏饭吃的"降维打击"大招';
+          var elT = document.getElementById('tipsSectionTitle');
+          if (elT) elT.textContent = '给自己的3个行动';
+          document.getElementById('yearThemeSection').style.display = '';
+          document.getElementById('secIcon7').style.background = iconColor;
+        }
+        hideLoading();
+        return; // AI成功，跳过静态渲染
+      }
+    } catch(aiErr) {
+      console.warn('AI报告失败，降级到静态模板:', aiErr.message);
+    }
+    // 恢复加载文案
+    var ltEl2 = document.getElementById('loadingText');
+    if (ltEl2) ltEl2.textContent = '正在计算天赋密码...';
+    var lsEl2 = document.getElementById('loadingSub');
+    if (lsEl2) lsEl2.style.display = 'none';
+  }
+
   // ═══ Voice texts ═══
   var openingText = (typeof genFullOpening === 'function')
     ? genFullOpening(childName, lifeNum, missingNums.length, dayMasterWX, childGender, baziLinks)
     : (content ? content.coreDesc : '');
 
   // ═══ Header ═══
-  document.getElementById('childNameDisplay').textContent = childName;
+  document.getElementById('childNameDisplay').textContent =
+    isAdult ? (childName + ' · ' + lifeNum + '号 · ' + numData.name + '能量') : childName;
   document.getElementById('birthInfoDisplay').textContent =
     childYear + '年' + childMonth + '月' + childDay + '日';
 
@@ -392,22 +539,273 @@
     var name = numData.name;
     var personalityName = numData.personality || (lifeNum + '号');
     var avatar = getAvatar(lifeNum);
-    var coreDesc = openingText || (content ? content.coreDesc : '');
+    var coreDesc = isAdult
+      ? (typeof adultOpening === 'object' && adultOpening[lifeNum] ? adultOpening[lifeNum](childName) : '')
+      : (openingText || (content ? content.coreDesc : ''));
+
+    var personalityTitle = isAdult
+      ? (childName + ' 是 ' + lifeNum + '号 · ' + personalityName + ' 人')
+      : (childName + ' 是 ' + lifeNum + '号 · ' + personalityName);
 
     root.innerHTML =
       '<div class="personality-card anim-fade-up" style="background: linear-gradient(135deg, ' + color + '18, ' + color + '0A);">' +
-        '<h1 class="personality-title">' + childName + ' 是 ' + lifeNum + '号 · ' + personalityName + '</h1>' +
+        '<h1 class="personality-title">' + personalityTitle + '</h1>' +
         '<p class="personality-subtitle">' + name + '能量 · ' + numData.theme + '</p>' +
         '<div class="personality-avatar">' + avatar + '</div>' +
-        '<p class="personality-energy">' + coreDesc + '</p>' +
+        '<p class="personality-energy" id="aiOpening">' + coreDesc + '</p>' +
       '</div>';
   })();
 
+  // ═══ Adult: Wealth Pattern + Industry Recommendations ═══
+  var wealthData = null;
+  var industryData = null;
+  if (isAdult && baziData && wuXingData && strengthData) {
+    try {
+      wealthData = calcWealthPattern(baziData, wuXingData, strengthData, lifeNum);
+      var xiWXList = xijiData ? xijiData.xi.map(function(it) { return it.wx; }) : [dayMasterWX];
+      industryData = calcIndustry(dayMasterWX, xiWXList, lifeNum, baziData);
+    } catch(e) {
+      console.warn('Wealth/Industry calc:', e);
+    }
+  }
+
+  if (isAdult && wealthData) {
+    (function renderWealthAndIndustry() {
+      var root = document.getElementById('personalityRoot');
+      var wxColors = {木:'#6BCB77',火:'#FF6B6B',土:'#FFB830',金:'#FFD93D',水:'#4D96FF'};
+      var caiColor = wxColors[wealthData.caiWX] || '#C4A882';
+      var scorePct = wealthData.score;
+      var scoreColor = scorePct >= 80 ? '#2E7D3A' : (scorePct >= 70 ? '#FFB830' : (scorePct >= 60 ? '#FF9F43' : '#8C7A6B'));
+
+      // Level badge colors
+      var levelColors = {
+        'LEVEL_5': { bg: '#D4EDDA', color: '#2E7D3A' },
+        'LEVEL_4': { bg: '#E8F5E9', color: '#388E3C' },
+        'LEVEL_3': { bg: '#FFF3CD', color: '#E65100' },
+        'LEVEL_2': { bg: '#FFE8CC', color: '#FF9F43' },
+        'LEVEL_1': { bg: '#F0EDE8', color: '#8C7A6B' }
+      };
+      var lc = levelColors[wealthData.level] || levelColors['LEVEL_1'];
+
+      var html =
+        // --- Wealth Pattern Card ---
+        '<div class="section-header anim-fade-up stagger-3">' +
+          '<span class="section-icon" style="background:' + adultColor + ';">💰</span>' +
+          '<span class="section-title">财富格局评估</span>' +
+        '</div>' +
+
+        // Pattern name + level badge
+        '<div class="card anim-fade-up stagger-3" style="padding:24px 20px;text-align:center;">' +
+          '<div style="display:inline-block;font-size:12px;font-weight:600;padding:3px 12px;border-radius:100px;background:' + lc.bg + ';color:' + lc.color + ';margin-bottom:10px;">' +
+            wealthData.level + ' · ' + wealthData.levelDesc +
+          '</div>' +
+          '<div style="font-family:var(--font-display);font-size:24px;color:' + caiColor + ';margin-bottom:4px;">' + wealthData.pattern + '</div>' +
+          '<div style="font-size:13px;color:var(--text-muted);margin-bottom:2px;">' + (wealthData.patternTag || '') + '</div>' +
+          '<div style="font-size:12px;color:var(--text-muted);margin-bottom:16px;">财星：' + wealthData.caiWX + '（五行出现' + wealthData.caiScore + '次）</div>' +
+          // Score bar
+          '<div style="margin-bottom:4px;">' +
+            '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">' +
+              '<span style="font-size:12px;color:var(--text-muted);">财富潜力指数</span>' +
+              '<span style="font-size:14px;font-weight:600;color:' + scoreColor + ';">' + wealthData.score + '分</span>' +
+            '</div>' +
+            '<div style="width:100%;height:8px;background:#EDE0D5;border-radius:4px;overflow:hidden;">' +
+              '<div style="width:' + scorePct + '%;height:100%;border-radius:4px;background:linear-gradient(90deg,#FF6B6B,#FF9F43,#FFD93D,#6BCB77,#2E7D3A);transition:width 1s ease-out;"></div>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+
+        // Description card
+        '<div class="card anim-fade-up stagger-3" style="padding:20px;">' +
+          '<p style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">先天财富格局</p>' +
+          '<p style="font-size:14px;color:var(--text-secondary);line-height:1.85;">' + (wealthData.desc || '') + '</p>' +
+        '</div>';
+
+      // --- Inner Conflict Card ---
+      if (wealthData.conflictTag && wealthData.conflictDesc) {
+        html +=
+          '<div class="card anim-fade-up stagger-3" style="padding:20px;background:linear-gradient(135deg,#FFF5F5,#FFF0F0);">' +
+            '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">' +
+              '<span style="font-size:18px;">⚠️</span>' +
+              '<span style="font-size:15px;font-weight:600;color:#C0392B;">核心精神内耗</span>' +
+            '</div>' +
+            '<div style="display:inline-block;font-size:13px;font-weight:600;color:#FF6B6B;background:#FFE8E8;padding:3px 12px;border-radius:100px;margin-bottom:10px;">' +
+              wealthData.conflictTag +
+            '</div>' +
+            '<p style="font-size:13px;color:var(--text-secondary);line-height:1.85;">' + wealthData.conflictDesc + '</p>' +
+          '</div>';
+      }
+
+      // --- 3 Tips (锦囊) ---
+      if (wealthData.tips && wealthData.tips.length > 0) {
+        html +=
+          '<div class="card anim-fade-up stagger-3" style="padding:20px;">' +
+            '<p style="font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:14px;">给你的3个锦囊</p>';
+        for (var ti = 0; ti < wealthData.tips.length; ti++) {
+          var tip = wealthData.tips[ti];
+          html +=
+            '<div style="background:#FAF8F5;border-radius:12px;padding:14px;margin-bottom:10px;border-left:3px solid ' + adultColor + ';">' +
+              '<p style="font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:6px;">' + tip.title + '</p>' +
+              '<p style="font-size:13px;color:var(--text-secondary);line-height:1.8;">' + tip.content + '</p>' +
+            '</div>';
+        }
+        html += '</div>';
+      }
+
+      // Reason card (debug/transparency)
+      html +=
+        '<div class="card anim-fade-up stagger-3" style="padding:16px 20px;">' +
+          '<p style="font-size:11px;color:var(--text-muted);line-height:1.65;">' + wealthData.reason + '</p>' +
+        '</div>';
+
+      // --- Industry Recommendation Card ---
+      if (industryData) {
+        // ═══ Enhanced: 天命行业布局（梯度卡片） ═══
+        if (industryData.enhanced && industryData.sectors) {
+          html +=
+            '<div class="section-header anim-fade-up stagger-3" style="margin-top:4px;">' +
+              '<span class="section-icon" style="background:' + adultColor + ';">🚀</span>' +
+              '<span class="section-title">' + industryData.profileName + '</span>' +
+            '</div>' +
+            '<div class="card anim-fade-up stagger-3" style="padding:20px;">' +
+              '<p style="font-size:13px;color:var(--text-secondary);line-height:1.75;margin-bottom:18px;">' + industryData.profileDesc + '</p>';
+
+          // 3 sector gradient badges
+          for (var si = 0; si < industryData.sectors.length; si++) {
+            var sec = industryData.sectors[si];
+            html +=
+              '<div style="border-radius:14px;padding:20px 18px;margin-bottom:14px;background:' + sec.gradient + ';color:#fff;position:relative;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.08);">' +
+                // Badge label
+                '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">' +
+                  '<span style="font-size:22px;">' + sec.icon + '</span>' +
+                  '<div>' +
+                    '<div style="font-size:16px;font-weight:700;line-height:1.3;">' + sec.title + '</div>' +
+                    '<div style="font-size:11px;opacity:0.85;">' + sec.label + ' · ' + sec.tagline + '</div>' +
+                  '</div>' +
+                '</div>' +
+                // Copy
+                '<p style="font-size:13px;line-height:1.85;opacity:0.95;color:#fff;">' + sec.copy + '</p>' +
+              '</div>';
+          }
+
+          // Avoid section
+          html +=
+              '<div style="background:#FFF5F5;border-radius:12px;padding:14px 16px;margin-top:8px;">' +
+                '<p style="font-size:12px;font-weight:600;color:#C0392B;margin-bottom:4px;">⚠️ 能量黑洞 · 避坑指南</p>' +
+                '<p style="font-size:12px;color:var(--text-secondary);line-height:1.75;">' + (industryData.avoidCopy || '') + '</p>' +
+                '<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px;">' +
+                  '<span style="font-size:11px;padding:3px 10px;border-radius:100px;background:#FFE8E8;color:#C0392B;">忌 ' + (industryData.unfavorable || []).join(' ') + '</span>' +
+                  '<span style="font-size:11px;padding:3px 10px;border-radius:100px;background:#F0FBF2;color:#2E7D3A;">喜 ' + (industryData.favorable || []).join(' ') + '</span>' +
+                '</div>' +
+              '</div>';
+
+          // Num-based supplement
+          if (industryData.numBased && industryData.numBased.length > 0) {
+            var numSuppTags = '';
+            for (var ns = 0; ns < industryData.numBased.length; ns++) {
+              numSuppTags += '<span style="display:inline-block;font-size:12px;font-weight:500;padding:5px 12px;border-radius:100px;background:#F8F4FF;color:#9B72CF;margin:3px 5px 3px 0;">' + industryData.numBased[ns] + '</span>';
+            }
+            html +=
+              '<div style="margin-top:14px;text-align:center;">' +
+                '<p style="font-size:11px;color:var(--text-muted);margin-bottom:6px;">🔢 生命数字' + lifeNum + '号补充方向</p>' +
+                '<div style="line-height:2;">' + numSuppTags + '</div>' +
+              '</div>';
+          }
+
+          html += '</div>'; // close card
+        } else {
+          // ═══ Generic: 传统五行行业推荐 ═══
+        var primaryTags = '';
+        for (var pi = 0; pi < industryData.primary.length; pi++) {
+          primaryTags += '<span style="display:inline-block;font-size:13px;font-weight:500;padding:6px 14px;border-radius:100px;background:#EEF6FF;color:#4D96FF;margin:4px 6px 4px 0;">' + industryData.primary[pi] + '</span>';
+        }
+        // Num-based tags
+        var numTags = '';
+        for (var ni = 0; ni < industryData.numBased.length; ni++) {
+          numTags += '<span style="display:inline-block;font-size:13px;font-weight:500;padding:6px 14px;border-radius:100px;background:#FFF0F5;color:#C77DFF;margin:4px 6px 4px 0;">' + industryData.numBased[ni] + '</span>';
+        }
+        // Cross match tags
+        var crossTags = '';
+        if (industryData.crossMatch.length > 0) {
+          for (var ci = 0; ci < industryData.crossMatch.length; ci++) {
+            crossTags += '<span style="display:inline-block;font-size:13px;font-weight:600;padding:7px 16px;border-radius:100px;background:linear-gradient(135deg,#FFF8E1,#FFECB3);color:#E65100;margin:4px 6px 4px 0;box-shadow:0 2px 8px rgba(255,183,48,0.2);">' + industryData.crossMatch[ci] + '</span>';
+          }
+        }
+        // Avoid tags
+        var avoidTags = '';
+        for (var ai = 0; ai < industryData.avoid.length; ai++) {
+          avoidTags += '<span style="display:inline-block;font-size:12px;padding:5px 12px;border-radius:100px;background:#F5F0EB;color:#A8917A;margin:3px 5px 3px 0;">' + industryData.avoid[ai] + '</span>';
+        }
+
+        html +=
+          '<div class="section-header anim-fade-up stagger-3" style="margin-top:4px;">' +
+            '<span class="section-icon" style="background:' + adultColor + ';">💼</span>' +
+            '<span class="section-title">适合你的行业方向</span>' +
+          '</div>' +
+          '<div class="card anim-fade-up stagger-3" style="padding:20px;">' +
+            '<p style="font-size:12px;color:var(--text-muted);margin-bottom:10px;">基于八字喜用神 + 生命数字双重推算</p>' +
+            // Primary
+            '<div style="margin-bottom:16px;">' +
+              '<p style="font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:6px;">✅ 能量共振的行业（主推）</p>' +
+              '<div style="line-height:2;">' + primaryTags + '</div>' +
+              '<p style="font-size:12px;color:var(--text-secondary);margin-top:6px;line-height:1.6;">' + industryData.primaryReason + '</p>' +
+            '</div>' +
+            // Num-based
+            '<div style="margin-bottom:16px;">' +
+              '<p style="font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:6px;">🔢 生命数字指向的方向</p>' +
+              '<div style="line-height:2;">' + numTags + '</div>' +
+            '</div>' +
+            // Cross match (only if non-empty)
+            (industryData.crossMatch.length > 0 ?
+              '<div style="margin-bottom:16px;background:#FFFDE7;border-radius:12px;padding:14px;">' +
+                '<p style="font-size:13px;font-weight:600;color:#E65100;margin-bottom:6px;">✨ 两套系统都指向（最强推荐）</p>' +
+                '<div style="line-height:2;">' + crossTags + '</div>' +
+              '</div>' : '') +
+            // Avoid
+            '<div>' +
+              '<p style="font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:6px;">⚠️ 能量相克的方向（谨慎选择）</p>' +
+              '<div style="line-height:2;">' + avoidTags + '</div>' +
+              '<p style="font-size:11px;color:var(--text-muted);margin-top:4px;line-height:1.5;">' + industryData.avoidReason + '</p>' +
+            '</div>' +
+          '</div>';
+        } // end generic (else)
+      } // end if (industryData)
+
+      // Insert after personality card
+      var div = document.createElement('div');
+      div.innerHTML = html;
+      root.parentNode.insertBefore(div, root.nextSibling);
+    })();
+  }
+
   // Section icon colors
-  var icons = ['secIcon1', 'secIcon2', 'secIcon4', 'secIcon5', 'secIcon6'];
-  for (var ii = 0; ii < icons.length; ii++) {
-    var el = document.getElementById(icons[ii]);
-    if (el) el.style.background = iconColor;
+  var iconsEls = ['secIcon1', 'secIcon2', 'secIcon3', 'secIcon4', 'secIcon5', 'secIcon6', 'secIcon7'];
+  for (var ii = 0; ii < iconsEls.length; ii++) {
+    var elIcon = document.getElementById(iconsEls[ii]);
+    if (elIcon) elIcon.style.background = iconColor;
+  }
+
+  // Adult mode: switch section headers
+  if (isAdult) {
+    var elMissing = document.getElementById('missingSectionTitle');
+    if (elMissing) elMissing.textContent = '人生课题';
+    var elPersonality = document.getElementById('personalitySectionTitle');
+    if (elPersonality) elPersonality.textContent = '🔮 灵魂出厂设置与搞钱本能';
+    var elStrength = document.getElementById('strengthSectionTitle');
+    if (elStrength) elStrength.textContent = '🔥 老天赏饭吃的"降维打击"大招';
+    var elTips = document.getElementById('tipsSectionTitle');
+    if (elTips) elTips.textContent = '给自己的3个行动';
+    var elPaywall = document.getElementById('paywallTitle');
+    if (elPaywall) elPaywall.textContent = '解锁完整人生解读';
+    var elPW1 = document.getElementById('paywallItem1');
+    if (elPW1) elPW1.textContent = '完整人生解读报告（含八字联动分析）';
+    var elPW2 = document.getElementById('paywallItem2');
+    if (elPW2) elPW2.textContent = '个人流年主题·每年关键方向指引';
+    var elPW3 = document.getElementById('paywallItem3');
+    if (elPW3) elPW3.textContent = '关系合盘·伴侣/好友的相处密码';
+    var elPW4 = document.getElementById('paywallItem4');
+    if (elPW4) elPW4.textContent = '人生课题深度解读·具体行动方案';
+    var elPWC = document.getElementById('paywallBottomCaption');
+    if (elPWC) elPWC.textContent = '支付后即时解锁完整报告';
   }
 
   if (!content) {
@@ -574,8 +972,29 @@
     document.getElementById('connectionsCard').innerHTML = html || '<p class="body-text text-center">暂无显著连线</p>';
   })();
 
-  // ═══ Layer 3: BaZi-Number Linked Missing Analysis ═══
+  // ═══ Layer 3: Missing Analysis / 人生课题 (Adult) ═══
   (function renderMissing() {
+    // Adult mode: render 人生课题
+    if (isAdult) {
+      var lesson = adultLifeLesson[lifeNum] || adultLifeLesson[1];
+      var lessonHtml =
+        '<div class="card" style="padding:24px 20px;">' +
+          '<div style="display:inline-block;font-size:13px;font-weight:600;color:#9B72CF;background:#F8F4FF;padding:4px 14px;border-radius:100px;margin-bottom:12px;">人生课题：' + lesson.label + '</div>' +
+          '<p style="font-family:var(--font-display);font-size:18px;color:var(--text-primary);margin-bottom:10px;line-height:1.5;">' + lesson.core + '</p>' +
+          '<p style="font-size:14px;color:var(--text-secondary);line-height:1.75;margin-bottom:12px;">' + lesson.body + '</p>' +
+          '<div style="background:#F8F4FF;border-radius:12px;padding:12px 14px;margin-bottom:10px;">' +
+            '<p style="font-size:12px;color:#9B72CF;margin-bottom:4px;">它会在这些时刻出现：</p>' +
+            '<p style="font-size:13px;color:var(--text-secondary);line-height:1.7;">' + lesson.scene + '</p>' +
+          '</div>' +
+          '<div style="background:#FFF5F5;border-radius:12px;padding:12px 14px;">' +
+            '<p style="font-size:12px;color:#FF6B6B;margin-bottom:4px;">现在就可以做：</p>' +
+            '<p style="font-size:13px;color:var(--text-secondary);line-height:1.7;">' + lesson.action + '</p>' +
+          '</div>' +
+        '</div>';
+      document.getElementById('missingSection').innerHTML = lessonHtml;
+      return;
+    }
+
     var wxOrder = ['木','火','土','金','水'];
     var hasMissingWX = false;
     var linkedItems = [];
@@ -585,8 +1004,8 @@
         var wx = wxOrder[wi];
         if (wuXingData.count[wx] === 0) {
           hasMissingWX = true;
-          var link = (typeof genBaziNumberLink === 'function')
-            ? genBaziNumberLink(childName, childGender, wx, lifeNum)
+          var link = (typeof genMissingWXDeep === 'function')
+            ? genMissingWXDeep(childName, childGender, wx, lifeNum)
             : null;
           if (link) linkedItems.push(link);
         }
@@ -594,15 +1013,14 @@
     }
 
     if (!hasMissingWX || linkedItems.length === 0) {
-      // Fallback to old behavior or show balanced
+      // Fallback: show balanced or generic missing number desc
       if (missingNums.length === 0) {
         document.getElementById('missingSection').innerHTML =
           '<div class="missing-balanced">' +
             '<span class="balanced-icon">🌈</span>' +
-            '<p class="balanced-text">孩子的数字能量和五行能量都完整，<br>各方面均衡发展，这是非常难得的配置。</p>' +
+            '<p class="balanced-text">数字能量和五行能量都完整，<br>各方面均衡发展，这是非常难得的配置。</p>' +
           '</div>';
       } else {
-        // Use voice.js or generic for missing numbers only
         var fallbackHtml = '';
         for (var mn = 0; mn < missingNums.length; mn++) {
           var num = missingNums[mn];
@@ -627,26 +1045,48 @@
     var html = '';
     for (var li = 0; li < linkedItems.length; li++) {
       var item = linkedItems[li];
+
+      // Build fix items with special styling for the 3rd item
       var fixesHtml = '';
-      for (var fi = 0; fi < item.fixes.length; fi++) {
-        fixesHtml += '<li>' + (fi + 1) + '. ' + item.fixes[fi] + '</li>';
+      for (var fi = 0; fi < item.fix.length; fi++) {
+        var isLast = fi === item.fix.length - 1;
+        var fixText = item.fix[fi];
+        // Split first sentence (the method) from the rest (the explanation)
+        var periodIdx = fixText.indexOf('。');
+        var method = periodIdx > -1 ? fixText.substring(0, periodIdx + 1) : fixText;
+        var explain = periodIdx > -1 ? fixText.substring(periodIdx + 1) : '';
+        fixesHtml +=
+          '<li style="font-size:13px;color:var(--text-secondary);line-height:1.7;margin-bottom:12px;' + (isLast ? 'background:#F0FBF2;border-radius:10px;padding:10px 12px;' : 'padding-left:4px;') + '">' +
+            '<span style="font-weight:600;color:var(--text-primary);">' + method + '</span>' +
+            (explain ? '<span style="color:#8C7A6B;">' + explain + '</span>' : '') +
+            (isLast ? '<span style="display:inline-block;font-size:10px;color:#2E7D3A;background:#D4EDDA;padding:2px 8px;border-radius:100px;margin-left:6px;">今天就能开始</span>' : '') +
+          '</li>';
       }
 
+      var relatedNums = item.lifeNumbers.join('、');
       html +=
-        '<div class="missing-item missing-bazi">' +
-          '<div class="missing-bazi-header">' +
-            '<span class="missing-bazi-tag' + (item.isDoubleConfirm ? ' double' : '') + '">' +
-              (item.isDoubleConfirm ? '🔴 双重印证' : '🔵 互补参考') +
+        '<div class="missing-item missing-bazi" style="padding:20px 16px;margin-bottom:14px;">' +
+          // Header: 八字缺X × 生命数字缺Y
+          '<div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:14px;">' +
+            '<span style="font-family:var(--font-display);font-size:16px;color:var(--text-primary);">八字缺' + item.missingWX + ' ' + wxEmoji[item.missingWX] + ' × 生命数字缺' + relatedNums + '</span>' +
+            '<span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:100px;' + (item.isDoubleConfirm ? 'background:#FFE8E8;color:#FF6B6B;' : 'background:#E8F0FF;color:#4D96FF;') + '">' +
+              (item.isDoubleConfirm ? '🔴 双重印证' : '🔵 参考') +
             '</span>' +
-            '<span class="missing-bazi-title">八字缺' + item.missingWX + ' ' + wxEmoji[item.missingWX] + ' × 生命数字缺' + item.relatedNum + '号</span>' +
           '</div>' +
-          '<div class="missing-bazi-sign">' +
-            '<p class="missing-sign-label">你可能注意到：</p>' +
-            '<p class="missing-sign-text">"' + item.sign + '"</p>' +
+          // Signal
+          '<div style="margin-bottom:12px;">' +
+            '<p style="font-size:11px;color:var(--text-muted);margin-bottom:4px;">你可能认出自己的样子：</p>' +
+            '<p style="font-size:13px;color:var(--text-secondary);line-height:1.8;">' + item.signal + '</p>' +
           '</div>' +
-          '<div class="missing-bazi-fixes">' +
-            '<p class="missing-fixes-label">这样补最有效：</p>' +
-            '<ol class="missing-fixes-list">' + fixesHtml + '</ol>' +
+          // CrossLink
+          '<div style="background:#FAF8F5;border-radius:10px;padding:10px 14px;margin-bottom:14px;">' +
+            '<p style="font-size:11px;color:var(--text-muted);margin-bottom:3px;">两套系统说的是同一件事：</p>' +
+            '<p style="font-size:12px;color:#8C7A6B;line-height:1.7;font-style:italic;">' + item.crossLink + '</p>' +
+          '</div>' +
+          // Fixes
+          '<div>' +
+            '<p style="font-size:12px;font-weight:600;color:var(--text-primary);margin-bottom:10px;">怎么补最落地：</p>' +
+            '<ol style="padding:0;margin:0;list-style:none;">' + fixesHtml + '</ol>' +
           '</div>' +
         '</div>';
     }
@@ -820,9 +1260,22 @@
         '<div class="geju-tip">💡 ' + gejuData.tip + '</div>' +
       '</div>';
 
-    // 4. BaZi-Life Number link
+    // 4. 双盘联动 / BaZi-Life Number link
     var linkHtml = '';
-    if (baziLinks.length > 0) {
+    if (isAdult && typeof getDualDiskResonance === 'function') {
+      var resonance = getDualDiskResonance(baziData, strengthData, lifeNum);
+      if (resonance) {
+        var resColor = (resonance.cas === 'strongKill') ? '#FF6B6B' : ((resonance.cas === 'weakWealth') ? '#9B72CF' : '#FF9F43');
+        linkHtml +=
+          '<div class="section-header anim-fade-up" style="margin-top:4px;">' +
+            '<span class="section-icon" style="background:' + resColor + ';">🌀</span>' +
+            '<span class="section-title">' + resonance.header + '</span>' +
+          '</div>' +
+          '<div class="card anim-fade-up">' +
+            '<p class="body-text" style="line-height:1.95;">' + resonance.body + '</p>' +
+          '</div>';
+      }
+    } else if (baziLinks.length > 0) {
       linkHtml +=
         '<div class="section-header anim-fade-up" style="margin-top:4px;">' +
           '<span class="section-icon" style="background:#FF9F43;">🔗</span>' +
@@ -856,35 +1309,82 @@
   })();
 
   // ═══ Personality ═══
-  var deepPersonality = (typeof genStrengths === 'function')
-    ? genStrengths(childName, childGender, lifeNum, dayMasterWX)
+  var deepPersonality = (typeof getNumberPersonality === 'function')
+    ? getNumberPersonality(childName, childGender, lifeNum, dayMasterWX)
     : '';
-  document.getElementById('personalityText').textContent = deepPersonality || content.personality;
+  // Baby mode: prefer element-specific personality from CONTENT.personalityWX
+  var babyWxPersonality = '';
+  if (!isAdult && content && content.personalityWX && dayMasterWX) {
+    babyWxPersonality = content.personalityWX[dayMasterWX] || content.personalityWX['default'] || '';
+  }
+  document.getElementById('personalityText').textContent =
+    isAdult ? (deepPersonality || content.personality) : (babyWxPersonality || content.personality);
 
   // ═══ Strengths ═══
   (function renderStrengths() {
-    // Use deepContent genStrengths as the single rich paragraph
-    var deepStr = (typeof genStrengths === 'function')
-      ? genStrengths(childName, childGender, lifeNum, dayMasterWX)
+    // Use numberContent for both adult and baby mode
+    var strengthText = (typeof getNumberStrength === 'function')
+      ? getNumberStrength(childName, childGender, lifeNum, dayMasterWX)
       : '';
-    if (deepStr) {
+    if (strengthText) {
       document.getElementById('strengthList').innerHTML =
         '<li style="list-style:none;padding:0;">' +
-          '<p class="body-text" style="margin:0;line-height:1.8;">' + deepStr + '</p>' +
+          '<p class="body-text" style="margin:0;line-height:1.8;">' + strengthText + '</p>' +
         '</li>';
     } else {
-      var strengths = content.strengths || [];
-      var dotColors = [iconColor, '#FF9F43', '#6BCB77'];
-      var strengthHtml = '';
-      for (var i = 0; i < strengths.length; i++) {
-        strengthHtml += '<li><span class="strength-dot" style="background:' + (dotColors[i] || iconColor) + ';"></span>' + strengths[i] + '</li>';
+      // Fallback to old content
+      if (isAdult) {
+        var adultStr = (typeof getAdultStrength === 'function')
+          ? getAdultStrength(childName, lifeNum, dayMasterWX)
+          : '';
+        document.getElementById('strengthList').innerHTML =
+          '<li style="list-style:none;padding:0;">' +
+            '<p class="body-text" style="margin:0;line-height:1.8;">' + (adultStr || '你有独特的天赋优势，等待被自己发现。') + '</p>' +
+          '</li>';
+      } else {
+        var strengths = content.strengths || [];
+        var dotColors = [iconColor, '#FF9F43', '#6BCB77'];
+        var strengthHtml = '';
+        for (var i = 0; i < strengths.length; i++) {
+          strengthHtml += '<li><span class="strength-dot" style="background:' + (dotColors[i] || iconColor) + ';"></span>' + strengths[i] + '</li>';
+        }
+        document.getElementById('strengthList').innerHTML = strengthHtml;
       }
-      document.getElementById('strengthList').innerHTML = strengthHtml;
     }
   })();
 
-  // ═══ Parenting Tips → Contact Mode ═══
+  // ═══ Parenting Tips → Contact Mode / 给自己的3个行动 (Adult) ═══
   (function renderContactMode() {
+    // Adult mode: use lifeActions (career/love/life three directions)
+    if (isAdult) {
+      var actions = (typeof getAdultActions === 'function')
+        ? getAdultActions(childName, childGender, lifeNum, dayMasterWX)
+        : null;
+      if (actions) {
+        var cardStyles = {
+          career: { bg: '#EEF6FF', border: '#4D96FF', icon: '💼' },
+          love:   { bg: '#FFF0F5', border: '#FF6B6B', icon: '💕' },
+          life:   { bg: '#F0FBF2', border: '#6BCB77', icon: '🌟' }
+        };
+        var keys = ['career', 'love', 'life'];
+        var actionsHtml = '';
+        for (var k = 0; k < keys.length; k++) {
+          var item = actions[keys[k]];
+          if (!item) continue;
+          var style = cardStyles[keys[k]];
+          actionsHtml +=
+            '<div style="background:' + style.bg + ';border-radius:12px;padding:16px;margin-bottom:10px;border-left:3px solid ' + style.border + ';">' +
+              '<p style="font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:6px;">' + style.icon + ' ' + item.title + '</p>' +
+              '<p style="font-size:13px;color:var(--text-secondary);line-height:1.8;">' + item.action + '</p>' +
+            '</div>';
+        }
+        document.getElementById('tipsList').style.listStyle = 'none';
+        document.getElementById('tipsList').style.padding = '0';
+        document.getElementById('tipsList').innerHTML = actionsHtml;
+        return;
+      }
+    }
+
     var mode = (typeof genContactMode === 'function')
       ? genContactMode(childName, childGender, lifeNum, dayMasterWX)
       : null;
@@ -910,6 +1410,125 @@
       document.getElementById('tipsList').innerHTML = tipsHtml;
     }
   })();
+
+  // ═══ 流年解读（成人版） + 9年轮回介绍 ═══
+  if (isAdult) {
+    (function renderYearTheme() {
+      var yearNum = calcYearNumber(childMonth, childDay, getCurrentYear());
+      // Prefer new ADULT_YEAR_REPORTS, fall back to adultYearTheme
+      var yearReport = (typeof ADULT_YEAR_REPORTS !== 'undefined') ? ADULT_YEAR_REPORTS[yearNum] : null;
+      var yearTheme = (typeof adultYearTheme !== 'undefined') ? adultYearTheme[yearNum] : null;
+      if (!yearReport && !yearTheme) return;
+      var yearColor = NUMBER_COLORS[yearNum] ? NUMBER_COLORS[yearNum].color : adultColor;
+      document.getElementById('yearThemeSection').style.display = '';
+      document.getElementById('secIcon7').style.background = adultColor;
+
+      // Year data — use new report if available
+      var yearTitle = yearReport ? yearReport.title : (yearNum + '号年 · ' + yearTheme.theme);
+      var yearDesc = yearReport ? yearReport.shortDesc : yearTheme.desc;
+
+      // Build 9-year timeline (horizontal scroll)
+      var cycleIntro = (typeof YEAR_CYCLE_EXPLANATION !== 'undefined') ? YEAR_CYCLE_EXPLANATION : null;
+      var cyclesData = (cycleIntro && cycleIntro.cycles) ? cycleIntro.cycles : [];
+      var cycleIntroDesc = (cycleIntro && cycleIntro.desc) ? cycleIntro.desc : '';
+      var currentYearFull = getCurrentYear();
+      var cycleStartYear = currentYearFull - (yearNum - 1);
+
+      var timelineHtml = '';
+      for (var ci = 0; ci < cyclesData.length; ci++) {
+        var cycle = cyclesData[ci];
+        var isCurrent = cycle.num === yearNum;
+        var cycleColor = NUMBER_COLORS[cycle.num] ? NUMBER_COLORS[cycle.num].color : '#A8917A';
+        var yearForCycle = cycleStartYear + ci;
+        timelineHtml +=
+          '<div style="flex:0 0 72px;text-align:center;' + (isCurrent ? '' : 'opacity:0.5;') + '">' +
+            '<div style="font-size:16px;margin-bottom:4px;">' + cycle.icon + '</div>' +
+            '<div style="width:40px;height:40px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:20px;' +
+              (isCurrent ? 'background:' + cycleColor + ';color:#fff;box-shadow:0 2px 12px ' + cycleColor + '66;' : 'background:#E8E0D8;color:#A8917A;') +
+            '">' + cycle.num + '</div>' +
+            '<div style="font-size:11px;color:' + (isCurrent ? 'var(--text-primary)' : 'var(--text-muted)') + ';margin-top:4px;font-weight:' + (isCurrent ? '600' : '400') + ';">' + cycle.name + '</div>' +
+            '<div style="font-size:10px;color:var(--text-muted);">' + yearForCycle + '</div>' +
+          '</div>';
+      }
+
+      var cycleYearsHtml = '';
+      for (var yi = 0; yi < cyclesData.length; yi++) {
+        var yn = cyclesData[yi].num;
+        var yf = cycleStartYear + yi;
+        var yc = NUMBER_COLORS[yn] ? NUMBER_COLORS[yn].color : '#A8917A';
+        cycleYearsHtml +=
+          '<span style="display:inline-block;font-size:12px;padding:4px 8px;border-radius:100px;margin:2px 3px;' +
+            (yn === yearNum ? 'background:' + yc + ';color:#fff;font-weight:600;' : 'background:#F0EDE8;color:#A8917A;') +
+          '">' + yf + '=' + yn + '年</span>';
+      }
+
+      // Build coreLesson + actions HTML if using new report format
+      var deepContentHtml = '';
+      if (yearReport && yearReport.coreLesson) {
+        deepContentHtml +=
+          '<div style="margin-top:16px;padding:16px;background:#FFF5EB;border-radius:14px;border-left:3px solid ' + yearColor + ';">' +
+            '<p style="font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:8px;">今年的核心内耗</p>' +
+            '<p style="font-size:13px;color:var(--text-secondary);line-height:1.9;">' + yearReport.coreLesson + '</p>' +
+          '</div>';
+      }
+      if (yearReport && yearReport.actions && yearReport.actions.length) {
+        deepContentHtml +=
+          '<div style="margin-top:12px;">' +
+            '<p style="font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:10px;">今年的3个行动</p>';
+        for (var ai = 0; ai < yearReport.actions.length; ai++) {
+          deepContentHtml +=
+            '<div style="padding:14px;background:#fff;border-radius:12px;margin-bottom:8px;box-shadow:0 1px 6px rgba(58,46,46,0.04);">' +
+              '<p style="font-size:12px;color:var(--text-secondary);line-height:1.85;">' + yearReport.actions[ai] + '</p>' +
+            '</div>';
+        }
+        deepContentHtml += '</div>';
+      }
+
+      document.getElementById('yearThemeCard').innerHTML =
+        // Current year big circle
+        '<div style="text-align:center;padding:8px 0;">' +
+          '<div style="display:inline-flex;align-items:center;justify-content:center;width:80px;height:80px;border-radius:50%;background:' + yearColor + ';font-family:var(--font-display);font-size:48px;color:#fff;box-shadow:0 4px 20px ' + yearColor + '44;margin-bottom:8px;">' + yearNum + '</div>' +
+          '<p style="font-family:var(--font-display);font-size:22px;color:var(--text-primary);margin-bottom:4px;">' + yearTitle + '</p>' +
+          '<p style="font-size:14px;color:var(--text-secondary);line-height:1.7;max-width:280px;margin:0 auto 12px;">' + yearDesc + '</p>' +
+        '</div>' +
+        // Deep content: coreLesson + actions
+        deepContentHtml +
+        // Foldable: 什么是9年流年轮回？
+        '<div style="border-top:1px solid #F5E0C8;padding-top:12px;margin-top:' + (yearReport ? '12px' : '0') + ';">' +
+          '<button id="yearCycleToggle" style="width:100%;background:none;border:none;display:flex;align-items:center;justify-content:space-between;padding:8px 0;cursor:pointer;font-family:var(--font-body);font-size:14px;color:var(--text-primary);-webkit-tap-highlight-color:transparent;">' +
+            '<span>什么是9年流年轮回？</span>' +
+            '<span style="font-size:12px;color:var(--text-muted);">▼</span>' +
+          '</button>' +
+          '<div class="year-cycle-fold-body" style="max-height:0;overflow:hidden;transition:max-height 0.4s ease-out;">' +
+            '<div style="padding:4px 0 16px;">' +
+              '<p style="font-size:13px;color:var(--text-secondary);line-height:2;white-space:pre-line;">' + cycleIntroDesc + '</p>' +
+              '<p style="font-size:12px;font-weight:600;color:var(--text-primary);margin:16px 0 8px;">9年轮回时间轴</p>' +
+              '<div style="display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding:8px 0 12px;scrollbar-width:none;">' + timelineHtml + '</div>' +
+              '<p style="font-size:12px;font-weight:600;color:var(--text-primary);margin:12px 0 6px;">你的9年周期</p>' +
+              '<p style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">从' + cycleStartYear + '年开始的轮回</p>' +
+              '<div style="line-height:2.2;">' + cycleYearsHtml + '</div>' +
+              '<p style="font-size:12px;color:var(--text-muted);margin-top:8px;">当前 ' + currentYearFull + ' 年 = <span style="font-weight:600;color:' + yearColor + ';">' + yearNum + '号年</span></p>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+
+      // Accordion toggle
+      var foldBtn = document.getElementById('yearCycleToggle');
+      if (foldBtn) {
+        foldBtn.addEventListener('click', function() {
+          var body = this.parentNode.querySelector('.year-cycle-fold-body');
+          if (!body) return;
+          if (body.style.maxHeight !== '0px' && body.style.maxHeight !== '0' && body.style.maxHeight !== '') {
+            body.style.maxHeight = '0';
+            this.querySelector('span:last-child').textContent = '▼';
+          } else {
+            body.style.maxHeight = '1200px';
+            this.querySelector('span:last-child').textContent = '▲';
+          }
+        });
+      }
+    })();
+  }
 
   // ═══ Paywall ═══
   document.getElementById('btnUnlock').addEventListener('click', function() {

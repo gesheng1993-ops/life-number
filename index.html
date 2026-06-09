@@ -3,44 +3,51 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>生命数字 · 发现孩子的天赋密码</title>
-<meta name="description" content="输入孩子的生日，通过生命数字了解TA的独特天赋、学习风格和养育方向">
+<title>生命数字 · 读懂你天生的底层代码</title>
+<meta name="description" content="通过生命数字+八字四柱，双系统解读你和孩子的天赋密码与人生课题">
 <link rel="stylesheet" href="src/css/common.css">
 <style>
-  .hero {
-    text-align: center;
-    padding: 48px 20px 32px;
+  /* ============================================
+     Index page — 6 blocks + foldable
+     ============================================ */
+
+  /* Shared card style (all cards: radius 20px, border 1.5px #F5E0C8) */
+  .idx-card {
+    background: var(--bg-card);
+    border-radius: var(--radius-card);
+    border: 1.5px solid #F5E0C8;
+    margin: 0 16px 14px;
     position: relative;
     z-index: var(--z-content);
   }
-  .hero .brand-name {
-    font-family: var(--font-display);
-    font-size: 24px;
-    color: var(--text-muted);
-    margin-bottom: 20px;
+
+  /* =========================
+     Block 1 — Brand / Hero
+     ========================= */
+  .hero-block {
+    text-align: center;
+    padding: 44px 20px 8px;
+    position: relative;
+    z-index: var(--z-content);
   }
-  .hero h1 {
+  .hero-block .brand {
+    display: inline-block;
     font-family: var(--font-display);
-    font-size: 34px;
-    font-weight: 400;
+    font-size: 28px;
     color: var(--text-primary);
-    line-height: 1.4;
-    letter-spacing: -0.01em;
-    text-wrap: balance;
-    margin-bottom: 12px;
+    letter-spacing: 0.04em;
+    margin-bottom: 6px;
   }
-  .hero .sub {
-    font-size: 15px;
+  .hero-block .brand-sub {
+    font-size: 14px;
     color: var(--text-secondary);
-    line-height: 1.7;
-    max-width: 300px;
-    margin: 0 auto;
+    letter-spacing: 0.05em;
   }
 
   /* Rainbow arch */
   .rainbow-arch {
     position: relative;
-    height: 180px;
+    height: 170px;
     margin: 0 16px;
     overflow: hidden;
     z-index: var(--z-content);
@@ -49,172 +56,480 @@
     width: 100%; height: 100%;
   }
 
-  /* Paint point cards */
-  .paint-cards {
-    padding: 32px 0 8px;
+  /* =========================
+     Block 2 — Two entry cards
+     ========================= */
+  .entry-cards {
+    display: flex;
+    gap: 12px;
+    margin: 0 16px;
     position: relative;
     z-index: var(--z-content);
   }
-  .paint-card {
-    background: var(--bg-card);
+  .entry-card {
+    flex: 1;
     border-radius: var(--radius-card);
-    padding: 20px;
-    margin: 0 16px 12px;
-    box-shadow: 0 2px 12px rgba(58,46,46,0.05);
+    padding: 22px 14px 18px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform var(--dur-fast) var(--ease-out),
+                box-shadow var(--dur-fast) var(--ease-out);
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    position: relative;
+    overflow: hidden;
+    color: #fff;
   }
-  .paint-card .emoji { font-size: 32px; margin-bottom: 8px; }
-  .paint-card h3 {
+  .entry-card:active {
+    transform: scale(0.96);
+  }
+  .entry-baby {
+    background: linear-gradient(145deg, #FFB347 0%, #FF8C2A 100%);
+    box-shadow: 0 6px 24px rgba(255, 143, 50, 0.30);
+  }
+  .entry-adult {
+    background: linear-gradient(145deg, #B490E0 0%, #8B5FBF 100%);
+    box-shadow: 0 6px 24px rgba(155, 114, 207, 0.30);
+  }
+  .entry-card .entry-emoji {
+    font-size: 38px;
+    margin-bottom: 4px;
+    line-height: 1;
+  }
+  .entry-card .entry-label {
     font-family: var(--font-display);
-    font-size: 18px;
-    font-weight: 400;
+    font-size: 20px;
+    margin-bottom: 4px;
+  }
+  .entry-card .entry-hint {
+    font-size: 12px;
+    opacity: 0.85;
+    line-height: 1.5;
+  }
+
+  /* =========================
+     Block 3 — Dual system card
+     ========================= */
+  .dual-card {
+    padding: 20px;
+  }
+  .dual-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 18px; bottom: 18px;
+    width: 4px;
+    border-radius: 2px;
+    background: linear-gradient(180deg,
+      #FF6B6B, #FF9F43, #FFD93D, #6BCB77, #4D96FF, #9B72CF, #C77DFF);
+  }
+  .dual-card .dual-block {
+    margin-bottom: 16px;
+  }
+  .dual-card .dual-block:last-child {
+    margin-bottom: 0;
+  }
+  .dual-card .dual-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-display);
+    font-size: 17px;
     color: var(--text-primary);
     margin-bottom: 4px;
   }
-  .paint-card p {
-    font-size: 14px;
+  .dual-card .dual-emoji {
+    font-size: 20px;
+  }
+  .dual-card .dual-desc {
+    font-size: 13px;
     color: var(--text-secondary);
-    line-height: 1.65;
+    line-height: 1.7;
   }
-
-  /* Social proof */
-  .social-proof {
+  .dual-card .dual-divider {
+    height: 1px;
+    background: #F5E0C8;
+    margin: 14px 0;
+  }
+  .dual-card .dual-vs {
     text-align: center;
-    padding: 12px 16px;
-    position: relative;
-    z-index: var(--z-content);
-  }
-  .social-proof .count {
-    font-family: var(--font-display);
-    font-size: 28px;
-    color: var(--c1);
-  }
-  .social-proof .label {
     font-size: 13px;
     color: var(--text-muted);
+    margin: 0;
   }
 
-  /* CTA */
-  .cta-section {
-    padding: 16px 0 40px;
+  /* =========================
+     Foldable — 什么是生命数字？
+     ========================= */
+  .foldable {
+    margin: 0 16px 14px;
     position: relative;
     z-index: var(--z-content);
-    text-align: center;
   }
-  .cta-section .btn-primary {
-    width: calc(100% - 32px);
-    margin: 0 16px;
+  .foldable-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    background: var(--bg-card);
+    border: 1.5px solid #F5E0C8;
+    border-radius: var(--radius-card);
+    padding: 16px 20px;
+    cursor: pointer;
+    font-family: var(--font-display);
+    font-size: 18px;
+    color: var(--text-primary);
+    -webkit-tap-highlight-color: transparent;
+    transition: border-radius var(--dur-normal) var(--ease-out);
   }
-  .cta-note {
-    font-size: 12px;
+  .foldable-trigger .fold-arrow {
+    font-size: 14px;
     color: var(--text-muted);
-    margin-top: 10px;
+    transition: transform var(--dur-normal) var(--ease-out);
+  }
+  .foldable.open .foldable-trigger {
+    border-radius: var(--radius-card) var(--radius-card) 0 0;
+  }
+  .foldable.open .foldable-trigger .fold-arrow {
+    transform: rotate(180deg);
+  }
+  .foldable-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s var(--ease-out);
+    background: var(--bg-card);
+    border-left: 1.5px solid #F5E0C8;
+    border-right: 1.5px solid #F5E0C8;
+    border-bottom: 1.5px solid #F5E0C8;
+    border-radius: 0 0 var(--radius-card) var(--radius-card);
+  }
+  .foldable.open .foldable-body {
+    max-height: 500px;
+  }
+  .foldable-content {
+    padding: 4px 20px 20px;
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.8;
   }
 
+  /* =========================
+     Block 4 — Horizontal scroll topic cards
+     ========================= */
+  .topic-scroll-wrapper {
+    margin: 0 0 14px;
+    position: relative;
+    z-index: var(--z-content);
+  }
+  .topic-scroll {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    padding: 0 16px;
+    scrollbar-width: none;
+  }
+  .topic-scroll::-webkit-scrollbar {
+    display: none;
+  }
+  .topic-card {
+    flex: 0 0 220px;
+    scroll-snap-align: start;
+    padding: 20px;
+    background: var(--bg-card);
+    border-radius: var(--radius-card);
+    border: 1.5px solid #F5E0C8;
+  }
+  .topic-card .topic-emoji {
+    font-size: 32px;
+    margin-bottom: 10px;
+  }
+  .topic-card .topic-title {
+    font-family: var(--font-display);
+    font-size: 18px;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+  }
+  .topic-card .topic-desc {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+
+  /* =========================
+     Block 5 — User reviews
+     ========================= */
+  .reviews-block {
+    margin: 0 16px 14px;
+    position: relative;
+    z-index: var(--z-content);
+  }
+  .review-card {
+    background: var(--bg-card);
+    border-radius: var(--radius-card);
+    border: 1.5px solid #F5E0C8;
+    padding: 20px;
+    margin-bottom: 10px;
+  }
+  .review-card .review-quote {
+    font-family: var(--font-display);
+    font-size: 28px;
+    color: var(--c2);
+    line-height: 1;
+    margin-bottom: -4px;
+  }
+  .review-card .review-text {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.75;
+    margin-bottom: 12px;
+  }
+  .review-card .review-stars {
+    color: #FFB830;
+    font-size: 14px;
+    letter-spacing: 2px;
+    margin-bottom: 4px;
+  }
+  .review-card .review-author {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  /* =========================
+     Block 6 — Dual CTA
+     ========================= */
+  .cta-block {
+    display: flex;
+    gap: 12px;
+    margin: 0 16px 32px;
+    position: relative;
+    z-index: var(--z-content);
+  }
+  .cta-btn {
+    flex: 1;
+    display: block;
+    padding: 14px 10px;
+    border-radius: var(--radius-btn);
+    text-align: center;
+    font-size: 14px;
+    font-weight: 500;
+    color: #fff;
+    cursor: pointer;
+    text-decoration: none;
+    transition: transform var(--dur-fast) var(--ease-out),
+                box-shadow var(--dur-fast) var(--ease-out);
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    border: none;
+    font-family: var(--font-body);
+  }
+  .cta-btn:active {
+    transform: scale(0.96);
+  }
+  .cta-baby {
+    background: linear-gradient(135deg, #FF9F43, #FF8C2A);
+    box-shadow: 0 4px 16px rgba(255, 143, 50, 0.30);
+  }
+  .cta-adult {
+    background: linear-gradient(135deg, #9B72CF, #8B5FBF);
+    box-shadow: 0 4px 16px rgba(155, 114, 207, 0.30);
+  }
+
+  /* =========================
+     Footer
+     ========================= */
+  .idx-footer {
+    text-align: center;
+    padding: 8px 20px 32px;
+    font-size: 12px;
+    color: var(--text-muted);
+    position: relative;
+    z-index: var(--z-content);
+  }
+
+  /* SVG decoration layer */
   .decor-svg {
     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
     pointer-events: none; z-index: var(--z-decor);
-  }
-
-  /* Footer */
-  .footer {
-    text-align: center;
-    padding: 20px;
-    font-size: 12px;
-    color: var(--text-muted);
-    position: relative;
-    z-index: var(--z-content);
   }
 </style>
 </head>
 <body>
 <div class="page" id="pageRoot">
 
-  <svg class="decor-svg" viewBox="0 0 430 900" preserveAspectRatio="xMidYMin slice" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="360" cy="40" r="140" fill="#FF9F43" opacity="0.07"/>
-    <circle cx="50" cy="300" r="90" fill="#FF6B6B" opacity="0.05"/>
-    <circle cx="380" cy="550" r="100" fill="#6BCB77" opacity="0.05"/>
-    <circle cx="30" cy="750" r="80" fill="#9B72CF" opacity="0.05"/>
+  <!-- SVG Decoration layer -->
+  <svg class="decor-svg" viewBox="0 0 430 1100" preserveAspectRatio="xMidYMin slice" xmlns="http://www.w3.org/2000/svg">
+    <!-- Large soft bubbles -->
+    <circle cx="360" cy="30" r="130" fill="#FF9F43" opacity="0.06"/>
+    <circle cx="50" cy="340" r="90" fill="#FF6B6B" opacity="0.05"/>
+    <circle cx="380" cy="500" r="100" fill="#6BCB77" opacity="0.05"/>
+    <circle cx="30" cy="700" r="80" fill="#9B72CF" opacity="0.05"/>
+    <circle cx="350" cy="850" r="70" fill="#4D96FF" opacity="0.04"/>
     <!-- Floating elements -->
-    <circle cx="50" cy="50" r="8" fill="#FFD93D" opacity="0.09">
+    <circle cx="50" cy="50" r="7" fill="#FFD93D" opacity="0.09">
       <animate attributeName="cy" values="50;38;50" dur="3s" repeatCount="indefinite"/>
     </circle>
-    <circle cx="370" cy="200" r="6" fill="#FF9F43" opacity="0.08">
-      <animate attributeName="cy" values="200;188;200" dur="2.8s" repeatCount="indefinite"/>
+    <circle cx="370" cy="180" r="6" fill="#FF9F43" opacity="0.08">
+      <animate attributeName="cy" values="180;168;180" dur="2.8s" repeatCount="indefinite"/>
     </circle>
-    <polygon points="80,150 82,156 88,156 83,160 85,166 80,162 75,166 77,160 72,156 78,156" fill="#FFD93D" opacity="0.08"/>
-    <polygon points="360,450 362,456 368,456 363,460 365,466 360,462 355,466 357,460 352,456 358,456" fill="#C77DFF" opacity="0.08"/>
-    <ellipse cx="330" cy="120" rx="50" ry="20" fill="#B8A595" opacity="0.06"/>
-    <ellipse cx="360" cy="112" rx="32" ry="15" fill="#B8A595" opacity="0.06"/>
+    <circle cx="60" cy="400" r="5" fill="#C77DFF" opacity="0.07">
+      <animate attributeName="cy" values="400;388;400" dur="3.2s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="360" cy="620" r="6" fill="#6BCB77" opacity="0.07">
+      <animate attributeName="cy" values="620;608;620" dur="3.5s" repeatCount="indefinite"/>
+    </circle>
+    <!-- Stars -->
+    <polygon points="90,140 92,146 98,146 93,150 95,156 90,152 85,156 87,150 82,146 88,146" fill="#FFD93D" opacity="0.08"/>
+    <polygon points="340,380 342,386 348,386 343,390 345,396 340,392 335,396 337,390 332,386 338,386" fill="#C77DFF" opacity="0.08"/>
+    <polygon points="80,560 82,566 88,566 83,570 85,576 80,572 75,576 77,570 72,566 78,566" fill="#FF9F43" opacity="0.07"/>
+    <!-- Cloud shapes -->
+    <ellipse cx="310" cy="100" rx="45" ry="16" fill="#B8A595" opacity="0.05"/>
+    <ellipse cx="340" cy="94" rx="28" ry="12" fill="#B8A595" opacity="0.05"/>
+    <ellipse cx="90" cy="500" rx="38" ry="14" fill="#B8A595" opacity="0.05"/>
+    <ellipse cx="115" cy="494" rx="22" ry="10" fill="#B8A595" opacity="0.05"/>
   </svg>
 
-  <div class="hero">
-    <div class="brand-name">生命数字</div>
-    <h1>每个孩子都有<br>属于自己的天赋密码</h1>
-    <p class="sub">用生命数字读懂孩子的独特气质，<br>给TA最适合的养育方式</p>
+  <!-- ==================== Block 1: Brand / Hero ==================== -->
+  <div class="hero-block anim-fade-up">
+    <div class="brand">生命数字</div>
+    <div class="brand-sub">读懂你天生的底层代码</div>
   </div>
 
   <!-- Rainbow arch -->
-  <div class="rainbow-arch">
-    <svg viewBox="0 0 398 180" xmlns="http://www.w3.org/2000/svg">
-      <!-- 7-layer rainbow arc -->
-      <ellipse cx="199" cy="180" rx="195" ry="175" fill="none" stroke="#FF6B6B" stroke-width="8" opacity="0.6"/>
-      <ellipse cx="199" cy="180" rx="185" ry="165" fill="none" stroke="#FF9F43" stroke-width="8" opacity="0.6"/>
-      <ellipse cx="199" cy="180" rx="175" ry="155" fill="none" stroke="#FFD93D" stroke-width="8" opacity="0.6"/>
-      <ellipse cx="199" cy="180" rx="165" ry="145" fill="none" stroke="#6BCB77" stroke-width="8" opacity="0.6"/>
-      <ellipse cx="199" cy="180" rx="155" ry="135" fill="none" stroke="#4D96FF" stroke-width="8" opacity="0.6"/>
-      <ellipse cx="199" cy="180" rx="145" ry="125" fill="none" stroke="#9B72CF" stroke-width="8" opacity="0.6"/>
-      <ellipse cx="199" cy="180" rx="135" ry="115" fill="none" stroke="#C77DFF" stroke-width="8" opacity="0.6"/>
+  <div class="rainbow-arch anim-fade-up stagger-1">
+    <svg viewBox="0 0 398 170" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="199" cy="170" rx="192" ry="165" fill="none" stroke="#FF6B6B" stroke-width="8" opacity="0.55"/>
+      <ellipse cx="199" cy="170" rx="182" ry="155" fill="none" stroke="#FF9F43" stroke-width="8" opacity="0.55"/>
+      <ellipse cx="199" cy="170" rx="172" ry="145" fill="none" stroke="#FFD93D" stroke-width="8" opacity="0.55"/>
+      <ellipse cx="199" cy="170" rx="162" ry="135" fill="none" stroke="#6BCB77" stroke-width="8" opacity="0.55"/>
+      <ellipse cx="199" cy="170" rx="152" ry="125" fill="none" stroke="#4D96FF" stroke-width="8" opacity="0.55"/>
+      <ellipse cx="199" cy="170" rx="142" ry="115" fill="none" stroke="#9B72CF" stroke-width="8" opacity="0.55"/>
+      <ellipse cx="199" cy="170" rx="132" ry="105" fill="none" stroke="#C77DFF" stroke-width="8" opacity="0.55"/>
       <!-- Center star -->
-      <polygon points="199,40 203,52 216,52 206,59 210,72 199,65 188,72 192,59 182,52 195,52" fill="#FFD93D" opacity="0.7"/>
-      <!-- Small decorative dots -->
-      <circle cx="80" cy="70" r="4" fill="#FF6B6B" opacity="0.3"/>
-      <circle cx="120" cy="50" r="3" fill="#FF9F43" opacity="0.25"/>
-      <circle cx="280" cy="50" r="3" fill="#6BCB77" opacity="0.25"/>
-      <circle cx="320" cy="70" r="4" fill="#4D96FF" opacity="0.3"/>
+      <polygon points="199,35 203,47 216,47 206,54 210,67 199,60 188,67 192,54 182,47 195,47" fill="#FFD93D" opacity="0.65"/>
+      <!-- Decorative dots -->
+      <circle cx="85" cy="60" r="4" fill="#FF6B6B" opacity="0.28"/>
+      <circle cx="125" cy="42" r="3" fill="#FF9F43" opacity="0.22"/>
+      <circle cx="275" cy="42" r="3" fill="#6BCB77" opacity="0.22"/>
+      <circle cx="315" cy="60" r="4" fill="#4D96FF" opacity="0.28"/>
     </svg>
   </div>
 
-  <!-- What is Rainbow Numerology -->
-  <div class="intro-card anim-fade-up">
-    <div class="intro-title">什么是彩虹数字</div>
-    <p class="intro-text">彩虹数字源于西方数字命理学，通过出生日期计算出生命数字（1-9），每个数字对应独特的颜色与能量属性。它不预测命运，而是帮助你读懂孩子天生的性格底色、学习方式和潜在天赋，是很多家长说"这就是在说我孩子"的工具。</p>
-  </div>
-
-  <!-- Pain points -->
-  <div class="paint-cards">
-    <div class="paint-card anim-fade-up stagger-1">
-      <div class="emoji">🤔</div>
-      <h3>不确定孩子适合什么兴趣班？</h3>
-      <p>每个数字的孩子有专属的兴趣方向，报班不再靠猜，精准匹配TA的能量类型。</p>
+  <!-- ==================== Block 2: Two entry cards ==================== -->
+  <div class="entry-cards anim-fade-up stagger-2">
+    <div class="entry-card entry-baby" onclick="location.href='input.html?type=baby'">
+      <div class="entry-emoji">👶</div>
+      <div class="entry-label">育儿版</div>
+      <div class="entry-hint">读懂孩子的天赋能量<br>获得专属养育指引</div>
     </div>
-    <div class="paint-card anim-fade-up stagger-2">
-      <div class="emoji">💔</div>
-      <h3>总觉得"为什么你就是不懂TA"？</h3>
-      <p>不是沟通方式不对，是你们的生命数字在说话。了解TA的数字，很多冲突自然就解开了。</p>
-    </div>
-    <div class="paint-card anim-fade-up stagger-3">
-      <div class="emoji">💡</div>
-      <h3>知道TA的天赋，但不知道怎么培养？</h3>
-      <p>不只告诉你"你的孩子是几号"，更给你每个季度具体的养育建议，看了就能用。</p>
+    <div class="entry-card entry-adult" onclick="location.href='input.html?type=adult'">
+      <div class="entry-emoji">🌟</div>
+      <div class="entry-label">成人版</div>
+      <div class="entry-hint">读懂自己的先天底色<br>找到人生课题与方向</div>
     </div>
   </div>
 
-  <!-- Social proof -->
-  <div class="social-proof">
-    <div class="count">7,200+</div>
-    <div class="label">位妈妈已经发现了孩子的天赋密码</div>
+  <!-- ==================== Block 3: Dual system explanation ==================== -->
+  <div class="idx-card dual-card anim-fade-up stagger-3">
+    <div class="dual-block">
+      <div class="dual-label">
+        <span class="dual-emoji">🌈</span> 生命数字
+      </div>
+      <p class="dual-desc">源自西方数字命理学，通过出生日期计算出1-9的生命数字。它不预测命运，而是揭示你天生的性格底色、行为模式和潜在天赋——是很多人看完说"这就是我"的自我认知工具。</p>
+    </div>
+    <div class="dual-divider"></div>
+    <div class="dual-block">
+      <div class="dual-label">
+        <span class="dual-emoji">☯️</span> 八字四柱
+      </div>
+      <p class="dual-desc">源自中国传统命理学，通过出生年月日时排出四柱八字。五行（木火土金水）的分布会补充说明：哪些能量你天生充足，哪些能量需要后天练习——和生命数字形成交叉印证。</p>
+    </div>
+    <p class="dual-vs">两套系统互相参照，比单看一种更准确</p>
   </div>
 
-  <!-- CTA -->
-  <div class="cta-section">
-    <a href="input.html" class="btn-primary">免费查看孩子的天赋报告</a>
-    <p class="cta-note">输入生日即可查看，无需注册</p>
+  <!-- ==================== Foldable: 什么是生命数字？ ==================== -->
+  <div class="foldable" id="foldableIntro">
+    <button class="foldable-trigger" onclick="toggleFoldable()" aria-expanded="false">
+      <span>什么是生命数字？</span>
+      <span class="fold-arrow">▼</span>
+    </button>
+    <div class="foldable-body">
+      <div class="foldable-content">
+        <p>彩虹数字源于西方数字命理学，通过出生日期计算出生命数字（1-9），每个数字对应独特的颜色与能量属性。</p>
+        <p style="margin-top:8px;">它不预测命运，而是帮助你读懂孩子天生的性格底色、学习方式和潜在天赋，是很多家长说"这就是在说我孩子"的工具。</p>
+        <p style="margin-top:8px;">对于成人，生命数字帮你看见自己反复出现的模式——包括优势，也包括课题——让你理解"我为什么总是这样"，然后有方向地练习和成长。</p>
+      </div>
+    </div>
   </div>
 
-  <div class="footer">
+  <!-- ==================== Block 4: Horizontal scroll topic cards ==================== -->
+  <div class="topic-scroll-wrapper anim-fade-up stagger-4">
+    <div class="topic-scroll">
+      <div class="topic-card">
+        <div class="topic-emoji">💼</div>
+        <div class="topic-title">事业方向</div>
+        <div class="topic-desc">每个数字有天然适合的领域和角色。了解你的数字，在选择方向时多一个参考系——不是限制你，是帮你找到最省力的那条路。</div>
+      </div>
+      <div class="topic-card">
+        <div class="topic-emoji">💕</div>
+        <div class="topic-title">关系模式</div>
+        <div class="topic-desc">为什么和某些人天然合拍，和另一些人总是不对劲？生命数字揭示你在关系中的底层模式——包括亲子关系和亲密关系。</div>
+      </div>
+      <div class="topic-card">
+        <div class="topic-emoji">🔮</div>
+        <div class="topic-title">自我认知</div>
+        <div class="topic-desc">"我为什么总是这样"的答案，很多时候藏在你的生命数字里。看见模式，是改变的第一步——这份报告就是那面镜子。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== Block 5: User reviews ==================== -->
+  <div class="reviews-block anim-fade-up stagger-5">
+    <div class="review-card">
+      <div class="review-quote">"</div>
+      <div class="review-text">看完报告终于理解了我女儿为什么那么坐不住——她数字里有5个1，天生就是行动派。以前总觉得她不听话，现在知道了，她是需要被带领，不是被命令。</div>
+      <div class="review-stars">★★★★★</div>
+      <div class="review-author">小宇妈妈 · 孩子4岁</div>
+    </div>
+    <div class="review-card">
+      <div class="review-quote">"</div>
+      <div class="review-text">一直觉得自己总是在同样的问题上卡住，看了自己的生命数字才知道，有些模式是"出厂设置"。报告没有说"你改不了"，而是给了具体的练习建议——这种态度我很喜欢。</div>
+      <div class="review-stars">★★★★★</div>
+      <div class="review-author">文婷 · 32岁</div>
+    </div>
+    <div class="review-card">
+      <div class="review-quote">"</div>
+      <div class="review-text">带两个孩子来测，一个3号一个7号，终于知道为什么他俩性格差异这么大。报告里给的养育建议针对每个数字都不同，不是千篇一律的模板，真的能用上。</div>
+      <div class="review-stars">★★★★★</div>
+      <div class="review-author">二胎妈妈 · 孩子6岁&3岁</div>
+    </div>
+  </div>
+
+  <!-- ==================== Block 6: Dual CTA ==================== -->
+  <div class="cta-block anim-fade-up stagger-6">
+    <a class="cta-btn cta-baby" href="input.html?type=baby">为孩子测算 · 免费</a>
+    <a class="cta-btn cta-adult" href="input.html?type=adult">为自己测算 · 免费</a>
+  </div>
+
+  <div class="idx-footer">
     <p>© 2025 生命数字 · 所有报告内容仅供参考</p>
   </div>
 
 </div>
+
+<script>
+function toggleFoldable() {
+  var el = document.getElementById('foldableIntro');
+  var btn = el.querySelector('.foldable-trigger');
+  var open = el.classList.contains('open');
+  if (open) {
+    el.classList.remove('open');
+    btn.setAttribute('aria-expanded', 'false');
+  } else {
+    el.classList.add('open');
+    btn.setAttribute('aria-expanded', 'true');
+  }
+}
+</script>
 </body>
 </html>
