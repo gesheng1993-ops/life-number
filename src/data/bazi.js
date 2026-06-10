@@ -102,7 +102,10 @@ function calcBazi(year, month, day, hour) {
     month: { gan: ec.getMonthGan(), zhi: ec.getMonthZhi() },
     day:   { gan: ec.getDayGan(),   zhi: ec.getDayZhi()   },
     hasHour: hasHour,
-    dayMaster: ec.getDayGan()
+    dayMaster: ec.getDayGan(),
+    solarYear: year,
+    solarMonth: month,
+    solarDay: day
   };
 
   if (hasHour) {
