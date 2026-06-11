@@ -234,6 +234,8 @@
   var urlParams = new URLSearchParams(window.location.search);
   var isAdult = urlParams.get('type') === 'adult';
 
+  console.log('[input] type param:', urlParams.get('type'), 'isAdult:', isAdult);
+
   var babyColor = '#FF9F43';
   var adultColor = '#9B72CF';
   var modeColor = isAdult ? adultColor : babyColor;
