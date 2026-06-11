@@ -19,6 +19,31 @@
     margin-top: 6px;
   }
 
+  /* Mode badge */
+  .mode-badge {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 14px;
+    border-radius: 100px;
+    margin-bottom: 10px;
+    letter-spacing: 0.5px;
+  }
+  .mode-baby { background: #FFF5EB; color: #FF9F43; }
+  .mode-adult { background: #F8F4FF; color: #9B72CF; }
+
+  /* Mode toggle */
+  .mode-toggle {
+    display: block;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 4px;
+    text-decoration: underline;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .mode-toggle:hover { color: var(--text-secondary); }
+
   .form-section {
     padding: 12px 0 24px;
     position: relative;
@@ -138,8 +163,10 @@
   </svg>
 
   <div class="header-area">
+    <div class="mode-badge mode-baby" id="modeBadge">育儿版</div>
     <h1 class="title-page" id="pageTitle">发现孩子的天赋密码</h1>
     <p class="subtitle" id="pageSubtitle">每个孩子都有一组属于自己的生命数字</p>
+    <span class="mode-toggle" id="modeToggle" style="display:none;">切换到成人版</span>
   </div>
 
   <form class="form-section" id="inputForm" action="report-free.html" method="GET" autocomplete="off" novalidate>
@@ -207,6 +234,25 @@
   var urlParams = new URLSearchParams(window.location.search);
   var isAdult = urlParams.get('type') === 'adult';
 
+  var babyColor = '#FF9F43';
+  var adultColor = '#9B72CF';
+  var modeColor = isAdult ? adultColor : babyColor;
+  var otherType = isAdult ? 'baby' : 'adult';
+  var otherLabel = isAdult ? '切换到育儿版' : '切换到成人版';
+  var otherUrl = 'input.html?type=' + otherType;
+
+  // Update mode badge
+  var badge = document.getElementById('modeBadge');
+  badge.textContent = isAdult ? '成人版' : '育儿版';
+  badge.className = 'mode-badge ' + (isAdult ? 'mode-adult' : 'mode-baby');
+
+  // Update mode toggle
+  var toggle = document.getElementById('modeToggle');
+  toggle.textContent = otherLabel;
+  toggle.style.display = '';
+  toggle.addEventListener('click', function() { window.location.href = otherUrl; });
+
+  // Update all text
   if (isAdult) {
     document.getElementById('pageTitle').textContent = '输入你的信息';
     document.getElementById('pageSubtitle').textContent = '每个数字都是一段独特的人生密码';
@@ -217,7 +263,15 @@
     document.getElementById('genderFemale').textContent = '女生';
     document.getElementById('submitBtn').textContent = '生成我的生命数字';
     document.getElementById('hourHint').textContent = '你的出生时辰（必填，用于八字排盘）';
+    // Adult button gradient
+    document.getElementById('submitBtn').style.background = 'linear-gradient(135deg, #9B72CF, #C77DFF)';
+    document.getElementById('submitBtn').style.boxShadow = '0 4px 16px rgba(155, 114, 207, 0.35)';
   }
+
+  // Update gender active color to match mode
+  var styleEl = document.createElement('style');
+  styleEl.textContent = '.gender-option.active { border-color: ' + modeColor + ' !important; background: ' + (isAdult ? '#F8F4FF' : '#FFF5F5') + ' !important; }';
+  document.head.appendChild(styleEl);
 
   // Set hidden type field
   document.getElementById('typeField').value = isAdult ? 'adult' : 'baby';
