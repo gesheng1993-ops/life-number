@@ -142,11 +142,11 @@
     <p class="subtitle" id="pageSubtitle">每个孩子都有一组属于自己的生命数字</p>
   </div>
 
-  <form class="form-section" id="inputForm" autocomplete="off" novalidate>
+  <form class="form-section" id="inputForm" action="report-free.html" method="GET" autocomplete="off" novalidate>
     <!-- Name -->
     <div class="input-group">
       <label for="childName" id="nameLabel">孩子的昵称</label>
-      <input type="text" id="childName" placeholder="比如：小宝、乐乐" maxlength="20" required>
+      <input type="text" id="childName" name="name" placeholder="比如：小宝、乐乐" maxlength="20" required>
       <div class="hint" id="nameHint">可填写小名，孩子信息不会上传服务器</div>
     </div>
 
@@ -163,12 +163,14 @@
     <div class="input-group">
       <label>出生日期</label>
       <div class="birthday-row">
-        <select id="birthYear" required></select>
-        <select id="birthMonth" required></select>
-        <select id="birthDay" required></select>
+        <select id="birthYear" name="year" required></select>
+        <select id="birthMonth" name="month" required></select>
+        <select id="birthDay" name="day" required></select>
       </div>
       <div class="hint" style="margin:0 16px 4px;" id="hourHint">出生时辰（必填，用于八字排盘）</div>
-      <select id="birthHour" style="width:calc(100% - 32px);margin:0 16px 12px;padding:14px 10px;border:1.5px solid var(--border);border-radius:var(--radius-input);font-size:15px;font-family:var(--font-body);color:var(--text-primary);background:var(--bg-card);-webkit-appearance:none;appearance:none;background-image:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23B8A595'/%3E%3C/svg%3E&quot;);background-repeat:no-repeat;background-position:right 14px center;padding-right:32px;cursor:pointer;">
+      <input type="hidden" name="type" id="typeField" value="baby">
+      <input type="hidden" name="gender" id="genderField" value="">
+      <select id="birthHour" name="hour" style="width:calc(100% - 32px);margin:0 16px 12px;padding:14px 10px;border:1.5px solid var(--border);border-radius:var(--radius-input);font-size:15px;font-family:var(--font-body);color:var(--text-primary);background:var(--bg-card);-webkit-appearance:none;appearance:none;background-image:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23B8A595'/%3E%3C/svg%3E&quot;);background-repeat:no-repeat;background-position:right 14px center;padding-right:32px;cursor:pointer;">
         <option value="">请选择出生时辰</option>
         <option value="23">子时 23:00-01:00</option>
         <option value="1">丑时 01:00-03:00</option>
@@ -217,6 +219,9 @@
     document.getElementById('hourHint').textContent = '你的出生时辰（必填，用于八字排盘）';
   }
 
+  // Set hidden type field
+  document.getElementById('typeField').value = isAdult ? 'adult' : 'baby';
+
   const form = document.getElementById('inputForm');
   const nameInput = document.getElementById('childName');
   const yearSelect = document.getElementById('birthYear');
@@ -243,6 +248,7 @@
     opt.classList.add('active');
     opt.setAttribute('aria-checked', 'true');
     selectedGender = opt.dataset.value;
+    document.getElementById('genderField').value = selectedGender;
   });
 
   // Keyboard support for gender
@@ -299,17 +305,16 @@
     e.preventDefault();
     if (!validate()) return;
 
-    const params = {
-      type: isAdult ? 'adult' : 'baby',
-      name: nameInput.value.trim(),
-      year: parseInt(yearSelect.value),
-      month: parseInt(monthSelect.value),
-      day: parseInt(daySelect.value),
-      gender: selectedGender,
-    };
-    params.hour = parseInt(hourSelect.value);
+    var url = 'report-free.html' +
+      '?type=' + encodeURIComponent(isAdult ? 'adult' : 'baby') +
+      '&name=' + encodeURIComponent(nameInput.value.trim()) +
+      '&year=' + yearSelect.value +
+      '&month=' + monthSelect.value +
+      '&day=' + daySelect.value +
+      '&gender=' + encodeURIComponent(selectedGender) +
+      '&hour=' + hourSelect.value;
 
-    navigate('report-free.html', params);
+    window.location.href = url;
   });
 })();
 </script>

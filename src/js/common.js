@@ -34,19 +34,22 @@ function getParams() {
 
 /** 构建 URL 参数字符串 */
 function buildParams(obj) {
-  const parts = [];
-  for (const [k, v] of Object.entries(obj)) {
-    if (v !== '' && v !== 0 && v !== false && v !== null && v !== undefined) {
-      parts.push(`${encodeURIComponent(k)}=${encodeURIComponent(v)}`);
-    }
+  var parts = [];
+  for (var k in obj) {
+    if (!obj.hasOwnProperty(k)) continue;
+    var v = obj[k];
+    if (v === '' || v === null || v === undefined || v === false || isNaN(v)) continue;
+    parts.push(encodeURIComponent(k) + '=' + encodeURIComponent(v));
   }
   return parts.join('&');
 }
 
 /** 跳转页面并携带参数 */
 function navigate(page, params) {
-  const qs = buildParams(params);
-  window.location.href = qs ? `${page}?${qs}` : page;
+  var qs = buildParams(params);
+  var url = qs ? page + '?' + qs : page;
+  console.log('navigate to:', url);
+  window.location.href = url;
 }
 
 /** 获取当前年份 */

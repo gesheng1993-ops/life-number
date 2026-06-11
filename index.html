@@ -68,10 +68,12 @@
   }
   .entry-card {
     flex: 1;
+    display: block;
     border-radius: var(--radius-card);
     padding: 22px 14px 18px;
     text-align: center;
     cursor: pointer;
+    text-decoration: none;
     transition: transform var(--dur-fast) var(--ease-out),
                 box-shadow var(--dur-fast) var(--ease-out);
     -webkit-tap-highlight-color: transparent;
@@ -417,16 +419,16 @@
 
   <!-- ==================== Block 2: Two entry cards ==================== -->
   <div class="entry-cards anim-fade-up stagger-2">
-    <div class="entry-card entry-baby" onclick="location.href='input.html?type=baby'">
+    <a class="entry-card entry-baby" href="input.html?type=baby">
       <div class="entry-emoji">👶</div>
       <div class="entry-label">育儿版</div>
       <div class="entry-hint">读懂孩子的天赋能量<br>获得专属养育指引</div>
-    </div>
-    <div class="entry-card entry-adult" onclick="location.href='input.html?type=adult'">
+    </a>
+    <a class="entry-card entry-adult" href="input.html?type=adult">
       <div class="entry-emoji">🌟</div>
       <div class="entry-label">成人版</div>
       <div class="entry-hint">读懂自己的先天底色<br>找到人生课题与方向</div>
-    </div>
+    </a>
   </div>
 
   <!-- ==================== Block 3: Dual system explanation ==================== -->
